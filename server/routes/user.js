@@ -7,7 +7,7 @@ router.get('/:userId', async (req, res) => {
     let user = await User
     .findById(req.params.userId)
     .select('username posts')
-    //.populate('something')
+    .populate('posts')
     .exec()
     
     res.status(200).json(user)
