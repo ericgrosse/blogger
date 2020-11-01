@@ -2,17 +2,34 @@
   <div class="register">
     <h1>Register</h1>
     <div class="register-inputs">
-      <input type="text" placeholder="Username">
-      <input type="text" placeholder="Password">
-      <input type="text" placeholder="Confirm password">
-      <button>Submit</button>
+      <input type="text" v-model="username" placeholder="Username">
+      <input type="text" v-model="password" placeholder="Password">
+      <input type="text" v-model="password2" placeholder="Confirm password">
+      <button v-on:click="submit">Submit</button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Register',
+  data() {
+    return {
+      username: '',
+      password: '',
+      password2: '',
+    }
+  },
+  methods: {
+    submit() {
+      axios.post('http://localhost:3000/register', {
+        username: this.username,
+        password: this.password,
+      })
+    },
+  }
 }
 </script>
 
