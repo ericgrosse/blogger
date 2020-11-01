@@ -1,6 +1,9 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const registerRoute = require('./routes/register')
+require('./db')() // handles mongoose connection logic
+
 const app = express()
 const port = 3000
 
@@ -12,10 +15,7 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
-app.post('/register', (req, res) => {
-  console.log(req.body)
-  res.send(req.body)
-})
+app.use('/register', registerRoute)
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

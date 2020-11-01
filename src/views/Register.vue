@@ -29,7 +29,7 @@ export default {
         password: this.password,
       })
       this.$store.commit('updateUsername', this.username)
-      this.$router.push('/')
+      //this.$router.push('/')
     },
   }
 }
