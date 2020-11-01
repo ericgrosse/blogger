@@ -23,11 +23,13 @@ export default {
     }
   },
   methods: {
-    submit() {
-      axios.post('http://localhost:3000/register', {
+    async submit() {
+      await axios.post('http://localhost:3000/register', {
         username: this.username,
         password: this.password,
       })
+      this.$store.commit('updateUsername', this.username)
+      this.$router.push('/')
     },
   }
 }
