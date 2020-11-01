@@ -32,4 +32,22 @@ router.post('/', async (req, res) => {
   }    
 })
 
+router.put('/:postId', async (req, res) => {
+  try {
+    let post = await Post
+    .findById(req.params.postId)
+    .select('title content userId')
+    .exec()
+
+    post.title = req.body.title
+    post.content = req.body.content
+    post.userId = req.body.userId
+
+    let savedPost = await post.save()
+    res.status(200).json(savedPost)
+  } catch (err) {
+    res.status(500).json({error: err})
+  }
+})
+
 module.exports = router
