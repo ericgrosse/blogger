@@ -1,5 +1,13 @@
 # blogger
 
+For the time being, these commands need to be run in separate terminals:
+
+```
+nodemon server # backend
+npm run serve # frontend
+mongod # database
+```
+
 ## Project setup
 ```
 npm install

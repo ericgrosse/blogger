@@ -1,10 +1,15 @@
 let chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../../server')
+const User = require('../../../server/models/User')
 const expect = chai.expect
 chai.use(chaiHttp);
 
 describe('POST /user/register', () => {
+  before(async () => {
+    await User.deleteMany({})
+  })
+
   it('should create a new user', (done) => {
     chai
     .request(server)
