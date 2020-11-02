@@ -5,11 +5,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    username: ''
+    user: {
+      username: '',
+      userId: ''
+    },
   },
   mutations: {
-    updateUsername(state, username) {
-      state.username = username
+    updateUser(state, user) {
+      state.user = Object.assign({}, {...user})
     }
   },
   actions: {

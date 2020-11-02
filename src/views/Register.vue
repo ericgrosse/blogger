@@ -24,12 +24,17 @@ export default {
   },
   methods: {
     async submit() {
-      await axios.post('http://localhost:3000/register', {
+      const res = await axios.post('http://localhost:3000/user/register', {
         username: this.username,
         password: this.password,
       })
-      this.$store.commit('updateUsername', this.username)
-      //this.$router.push('/')
+      
+      this.$store.commit('updateUser', {
+        username: res.data.username,
+        userId: res.data.userId
+      })
+      
+      this.$router.push('/')
     },
   }
 }

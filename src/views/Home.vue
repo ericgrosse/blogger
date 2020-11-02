@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <p>Welcome, {{username}}</p>
+    <p>Welcome, {{user.username}}</p>
+    <button v-on:click="createPost">Create Post</button>
   </div>
 </template>
 
@@ -15,8 +16,13 @@ export default {
       //username: ''
     }
   },
+  methods: {
+    createPost() {
+      this.$router.push('/create-post')
+    }
+  },
   computed: {
-    ...mapState(['username'])
+    ...mapState(['user'])
   },
   created() {
     //this.$router.push('/register')

@@ -26,7 +26,12 @@ router.post('/', async (req, res) => {
     foundUser.posts = [...foundUser.posts, savedPost._id]
     await foundUser.save()
 
-    res.status(201).end()
+    res.status(201).json({
+      postId: savedPost._id,
+      title: savedPost.title,
+      content: savedPost.content,
+      userId: savedPost.userId,
+    })
   } catch (err) {
     res.status(500).json({error: err})
   }    
