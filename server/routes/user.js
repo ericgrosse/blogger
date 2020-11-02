@@ -18,6 +18,22 @@ router.get('/:userId', async (req, res) => {
   }
 })
 
+router.post('/login', async (req, res) => {
+  const user = await User.findOne({username: req.body.username})
+
+  if (!user) {
+    return res.status(401).json({message: 'authentication failed'})
+  }
+  
+  const result = await bcrypt.compare(req.body.password, user.password)
+
+  if(!result) {
+    return res.status(401).json({message: 'authentication failed'})
+  }
+
+  res.status(200).json({message: 'authentication successful'})
+})
+
 router.post('/register', async (req, res) => {
   try {
     const existingUser = await User.find({username: req.body.username})
