@@ -23,16 +23,18 @@ export default {
   },
   methods: {
     async submitPost() {
-      const res = await axios.post(`http://localhost:3000/posts`, {
+      await axios.post(`http://localhost:3000/posts`, {
         title: this.title,
         content: this.content,
         userId: JSON.parse(localStorage.getItem('user')).userId,
       })
-      this.$store.commit('addPost', {
+      
+      /*this.$store.commit('addPost', {
         title: res.data.title,
         content: res.data.content,
         userId: res.data.userId
-      })
+      })*/
+      
       this.$router.push('/')
     }
   },

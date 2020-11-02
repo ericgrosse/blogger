@@ -9,6 +9,7 @@
       <div class="post-container" v-for="(post, index) in user.posts" :key="index">
         <h3>{{post.title}}</h3>
         <p>{{post.content}}</p>
+        <button v-on:click="deletePost(post._id)">Delete</button>
       </div>
     </div>
   </div>
@@ -32,6 +33,16 @@ export default {
   methods: {
     createPost() {
       this.$router.push('/create-post')
+    },
+    async deletePost(postId) {
+      await axios.delete(`http://localhost:3000/posts/${postId}`)
+      let res = await axios.get(`http://localhost:3000/user/${this.user.userId}`)
+      
+      this.user = {
+      username: res.data.username,
+      userId: res.data._id,
+      posts: res.data.posts
+      }
     }
   },
   /*computed: {
@@ -51,7 +62,7 @@ export default {
     let res = await axios.get(`http://localhost:3000/user/${this.user.userId}`)
     this.user = {
       username: res.data.username,
-      userId: res.data.userId,
+      userId: res.data._id,
       posts: res.data.posts
     }
   }
