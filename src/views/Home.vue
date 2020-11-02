@@ -6,7 +6,10 @@
       <button v-on:click="createPost">Create Post</button>
     </div>
     <div class="list-posts">
-      
+      <div class="post-container" v-for="(post, index) in user.posts" :key="index">
+        <h3>{{post.title}}</h3>
+        <p>{{post.content}}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -36,5 +39,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.home {
+  max-width: 300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
 
+.list-posts {
+  margin: 16px;
+}
+
+.post-container {
+  border: 1px solid black;
+  margin: 8px 0;
+}
 </style>
