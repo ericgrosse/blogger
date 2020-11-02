@@ -25,22 +25,11 @@ router.post('/register', async (req, res) => {
     if(existingUser.length > 0) {
       return res.status(409).json({message: 'username already in use'})
     }
-    else {
-      bcrypt.hash(req.body.password, 10, async (err, hash) => {
-        if (err) {
-          return res.status(500).json({error: err})
-        } else {
-          const user = new User({...req.body, password: hash})
-    
-          try {
-            let savedUser = await user.save()
-            res.status(201).json(savedUser)
-          } catch (err) {
-            res.status(500).json({error: err})
-          }  
-        }
-      })        
-    }
+
+    const hash = await bcrypt.hash(req.body.password, 10)
+    const user = new User({...req.body, password: hash})
+    let savedUser = await user.save()
+    res.status(201).json(savedUser)
   } catch(err) {
     res.status(500).json({error: err})
   }
