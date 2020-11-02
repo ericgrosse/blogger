@@ -19,7 +19,10 @@ router.get('/:userId', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-  const user = await User.findOne({username: req.body.username})
+  const user = await User
+  .findOne({username: req.body.username})
+  .populate('posts')
+  .exec()
 
   if (!user) {
     return res.status(401).json({message: 'authentication failed'})
@@ -31,7 +34,11 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({message: 'authentication failed'})
   }
 
-  res.status(200).json({message: 'authentication successful'})
+  res.status(200).json({
+    username: user.username,
+    userId: user._id,
+    posts: user.posts,
+  })
 })
 
 router.post('/register', async (req, res) => {
