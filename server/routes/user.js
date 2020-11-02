@@ -48,7 +48,8 @@ router.post('/register', async (req, res) => {
     
     res.status(201).json({
       username: savedUser.username,
-      userId: savedUser._id
+      userId: savedUser._id,
+      posts: savedUser.posts,
     })
   } catch(err) {
     res.status(500).json({error: err})

@@ -31,7 +31,8 @@ export default {
       
       this.$store.commit('updateUser', {
         username: res.data.username,
-        userId: res.data.userId
+        userId: res.data.userId,
+        posts: res.data.posts,
       })
       
       this.$router.push('/')

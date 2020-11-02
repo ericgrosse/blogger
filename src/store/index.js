@@ -7,12 +7,16 @@ export default new Vuex.Store({
   state: {
     user: {
       username: '',
-      userId: ''
+      userId: '',
+      posts: []
     },
   },
   mutations: {
     updateUser(state, user) {
-      state.user = Object.assign({}, {...user})
+      state.user = user
+    },
+    addPost(state, post) {
+      state.user.posts.push(post)
     }
   },
   actions: {

@@ -1,8 +1,13 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
-    <p>Welcome, {{user.username}}</p>
-    <button v-on:click="createPost">Create Post</button>
+    <div class="create-post">
+      <h1>Home</h1>
+      <p>Welcome, {{user.username}}</p>
+      <button v-on:click="createPost">Create Post</button>
+    </div>
+    <div class="list-posts">
+      
+    </div>
   </div>
 </template>
 
@@ -13,7 +18,7 @@ export default {
   name: 'Home',
   data() {
     return {
-      //username: ''
+      
     }
   },
   methods: {
@@ -29,3 +34,7 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+</style>
