@@ -15,13 +15,18 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+//import { mapState } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'Home',
   data() {
     return {
-      
+      user: {
+        username: '',
+        userId: '',
+        posts: [],
+      }
     }
   },
   methods: {
@@ -29,11 +34,26 @@ export default {
       this.$router.push('/create-post')
     }
   },
-  computed: {
+  /*computed: {
     ...mapState(['user'])
-  },
+  },*/
   created() {
-    //this.$router.push('/register')
+    const user = JSON.parse(localStorage.getItem('user'))
+
+    if (!user) {
+      this.$router.push('/login')
+    }
+    else {
+      this.user = user
+    }
+  },
+  async mounted() {
+    let res = await axios.get(`http://localhost:3000/user/${this.user.userId}`)
+    this.user = {
+      username: res.data.username,
+      userId: res.data.userId,
+      posts: res.data.posts
+    }
   }
 }
 </script>

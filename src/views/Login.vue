@@ -26,13 +26,15 @@ export default {
         username: this.username,
         password: this.password,
       })
-      
-      this.$store.commit('updateUser', {
+
+      const savedUser = {
         username: res.data.username,
         userId: res.data.userId,
         posts: res.data.posts,
-      })
+      }
       
+      //this.$store.commit('updateUser', savedUser)
+      localStorage.setItem('user', JSON.stringify(savedUser));
       this.$router.push('/')
     },
   }

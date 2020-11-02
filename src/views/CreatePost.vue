@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+//import { mapState } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -26,7 +26,7 @@ export default {
       const res = await axios.post(`http://localhost:3000/posts`, {
         title: this.title,
         content: this.content,
-        userId: this.user.userId,
+        userId: JSON.parse(localStorage.getItem('user')).userId,
       })
       this.$store.commit('addPost', {
         title: res.data.title,
@@ -36,9 +36,9 @@ export default {
       this.$router.push('/')
     }
   },
-  computed: {
+  /*computed: {
     ...mapState(['user'])
-  },
+  },*/
 }
 </script>
 
