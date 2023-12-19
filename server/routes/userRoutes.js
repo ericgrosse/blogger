@@ -2,10 +2,26 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
+const usernameRegex = /^[a-zA-Z0-9_]{1,15}$/; // Regular expression for Twitter-like handles
+const minPasswordLength = 8;
+const maxPasswordLength = 64;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/; // Password complexity regex without special characters
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format validation regex
+
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
     const { displayName, handle, email, password } = req.body;
+
+    // Check if displayName is empty
+    if (!displayName.trim()) {
+      return res.status(400).json({ error: 'Display name cannot be empty' });
+    }
+
+    // Check if the email is in a valid format
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email address format' });
+    }
 
     // Check if the email is unique
     const emailExists = await User.findOne({ email });
@@ -13,10 +29,22 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
+    // Check if the handle follows the rules
+    if (!usernameRegex.test(handle)) {
+      return res.status(400).json({ error: 'Invalid handle format. Handles can only contain letters, numbers, and underscores, and must be 1 to 15 characters long.' });
+    }
+
     // Check if the handle is unique
     const handleExists = await User.findOne({ handle });
     if (handleExists) {
       return res.status(400).json({ error: 'Handle already exists' });
+    }
+
+    // Check if the password meets criteria
+    if (password.length < minPasswordLength || password.length > maxPasswordLength || !passwordRegex.test(password)) {
+      return res.status(400).json({
+        error: `Invalid password. Password must be between ${minPasswordLength} and ${maxPasswordLength} characters long and include at least one uppercase letter, one lowercase letter, and one number.`,
+      });
     }
 
     const newUser = new User({ displayName, handle, email, password });
