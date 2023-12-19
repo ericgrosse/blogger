@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const usernameRegex = /^[a-zA-Z0-9_]{1,15}$/; // Regular expression for Twitter-like handles
@@ -50,6 +51,9 @@ router.post('/register', async (req, res) => {
     const newUser = new User({ displayName, handle, email, password });
     await newUser.save();
 
+    // Generate JWT token
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error(error);
@@ -77,17 +81,8 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Set user information in the session (you may want to customize this based on your authentication strategy)
-    req.session.user = {
-      _id: user._id,
-      email: user.email,
-    };
-
-    // Set a session cookie
-    res.cookie('connect.sid', req.sessionID, {
-      maxAge: 3600000,
-      httpOnly: true,
-    });
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({ message: 'Login successful', user: { _id: user._id, email: user.email } });
   } catch (error) {
@@ -105,8 +100,6 @@ router.post('/logout', (req, res) => {
         console.error('Error during logout:', err);
         return res.status(500).json({ error: 'Internal server error during logout' });
       }
-      // Clear the cookie to ensure the session is completely removed
-      res.clearCookie(3600000);
       res.status(200).json({ message: 'Logout successful' });
     });
   } catch (error) {
