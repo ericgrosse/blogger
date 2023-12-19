@@ -27,7 +27,7 @@ app.use(session({
 
 // Connect to MongoDB
 // Todo: Setup process.env.MONGODB_URI in the future
-mongoose.connect('mongodb://127.0.0.1/blogger', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://127.0.0.1/blogger');
 const db = mongoose.connection;
 
 // Handle MongoDB connection errors
@@ -36,7 +36,7 @@ db.once('open', () => console.log('Connected to MongoDB'));
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
-app.use('/api/users', userRoutes);
+app.use('/api/user', userRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3000;

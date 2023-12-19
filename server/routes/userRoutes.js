@@ -29,9 +29,37 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login
+// Login with email or handle
 router.post('/login', async (req, res) => {
-  // Implement login logic here
+  try {
+    const { identifier, password } = req.body;
+
+    // Find the user by email or handle
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { handle: identifier }],
+    });
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check if the password is correct (you should use a secure authentication method)
+    if (user.password !== password) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Set user information in the session (you may want to customize this based on your authentication strategy)
+    req.session.user = {
+      _id: user._id,
+      email: user.email,
+    };
+
+    res.status(200).json({ message: 'Login successful', user: { _id: user._id, email: user.email } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Logout
