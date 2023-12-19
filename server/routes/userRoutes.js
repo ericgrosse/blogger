@@ -55,6 +55,12 @@ router.post('/login', async (req, res) => {
       email: user.email,
     };
 
+    // Set a session cookie
+    res.cookie('connect.sid', req.sessionID, {
+      maxAge: 3600000,
+      httpOnly: true,
+    });
+
     res.status(200).json({ message: 'Login successful', user: { _id: user._id, email: user.email } });
   } catch (error) {
     console.error(error);
@@ -64,7 +70,21 @@ router.post('/login', async (req, res) => {
 
 // Logout
 router.post('/logout', (req, res) => {
-  // Implement logout logic here
+  try {
+    // Destroy the user session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error during logout:', err);
+        return res.status(500).json({ error: 'Internal server error during logout' });
+      }
+      // Clear the cookie to ensure the session is completely removed
+      res.clearCookie(3600000);
+      res.status(200).json({ message: 'Logout successful' });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 module.exports = router;
