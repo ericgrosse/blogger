@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
+import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import BlogPost from './components/BlogPost/BlogPost'
 import reportWebVitals from './reportWebVitals';
@@ -10,6 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
     <React.StrictMode>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/:handle/:postId" element={<BlogPost />} />
