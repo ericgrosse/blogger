@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const BlogPost = require('../models/BlogPost');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const usernameRegex = /^[a-zA-Z0-9_]{1,15}$/; // Regular expression for Twitter-like handles
 const minPasswordLength = 8;
@@ -54,7 +56,7 @@ router.post('/register', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({ message: 'User registered successfully', token, user: { _id: newUser._id, email: newUser.email } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -76,7 +78,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Check if the password is correct (you should use a secure authentication method)
+    // Check if the password is correct
     if (user.password !== password) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -84,7 +86,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ message: 'Login successful', user: { _id: user._id, email: user.email } });
+    res.status(200).json({ message: 'Login successful', token, user: { _id: user._id, email: user.email } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -102,6 +104,46 @@ router.post('/logout', (req, res) => {
       }
       res.status(200).json({ message: 'Logout successful' });
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create a new blog post
+router.post('/post', authMiddleware, async (req, res) => {
+  try {
+    const { title, content, viewCount, datePublished, dateLastEdited } = req.body;
+
+    if (!title) {
+      return res.status(400).json({ error: 'Missing required field: title' });
+    }
+
+    if (!content) {
+      return res.status(400).json({ error: 'Missing required field: content' });
+    }
+
+    // Create a new blog post
+    const newBlogPost = new BlogPost({
+      userId: req.user._id,
+      title,
+      content,
+      viewCount,
+      datePublished,
+      dateLastEdited
+    });
+
+    // Save the blog post to the database
+    await newBlogPost.save();
+
+    // Populate the user details in the response
+    await BlogPost.populate(newBlogPost, { path: 'userId', select: 'handle displayName' });
+
+    // Rename userId to user in the response
+    const { userId, ...rest } = newBlogPost.toObject();
+    const updatedBlogPost = { user: userId, ...rest };
+
+    res.status(201).json({ message: 'Blog post created successfully', blogPost: updatedBlogPost });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
