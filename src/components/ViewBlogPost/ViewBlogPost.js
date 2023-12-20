@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import './BlogPost.scss';
+import './ViewBlogPost.scss';
 
-function BlogPost() {
+function ViewBlogPost() {
   const [blogPost, setBlogPost] = useState([]);
   const { handle, postId } = useParams();
 
@@ -38,4 +38,4 @@ function BlogPost() {
   );
 }
 
-export default BlogPost;
+export default ViewBlogPost;

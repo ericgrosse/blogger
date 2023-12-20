@@ -194,11 +194,8 @@ router.get('/:handle/blog-posts/:postId', async (req, res) => {
   }
 });
 
-// Apply authMiddleware to all remaining routes
-router.use('/blog-posts', authMiddleware);
-
 // Delete a user and associated blog posts
-router.delete('/delete-user', async (req, res) => {
+router.delete('/delete-user', authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -223,6 +220,9 @@ router.delete('/delete-user', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Apply authMiddleware to all remaining routes
+router.use('/blog-posts', authMiddleware);
 
 // Create a new blog post
 router.post('/blog-posts', async (req, res) => {
@@ -281,16 +281,21 @@ router.put('/blog-posts/:postId', async (req, res) => {
     }
 
     // Find the blog post by postId and userId
-    const updatedBlogPost = await BlogPost.findOneAndUpdate(
+    let blogPostUpdate = await BlogPost.findOneAndUpdate(
       { _id: postId, userId: req.user._id },
       { title, content, dateLastEdited: Date.now() },
       { new: true }
-    );
+    )
+      .populate('userId', 'handle displayName'); // Populate user details
 
     // Check if the blog post exists
-    if (!updatedBlogPost) {
+    if (!blogPostUpdate) {
       return res.status(404).json({ error: 'Blog post not found' });
     }
+
+    // Rename userId to user in the response
+    const { userId, ...rest } = blogPostUpdate.toObject();
+    const updatedBlogPost = { user: userId, ...rest };
 
     res.status(200).json({ message: 'Blog post updated successfully', blogPost: updatedBlogPost });
   } catch (error) {

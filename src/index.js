@@ -5,7 +5,9 @@ import './index.css';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Register from './components/Register/Register';
-import BlogPost from './components/BlogPost/BlogPost'
+import CreateBlogPost from './components/CreateBlogPost/CreateBlogPost';
+import EditBlogPost from './components/EditBlogPost/EditBlogPost';
+import ViewBlogPost from './components/ViewBlogPost/ViewBlogPost';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -16,7 +18,9 @@ root.render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/:handle/:postId" element={<BlogPost />} />
+        <Route path="/create-post" element={<CreateBlogPost />} />
+        <Route path="/:handle/:postId/edit-post" element={<EditBlogPost />} />
+        <Route path="/:handle/:postId" element={<ViewBlogPost />} />
       </Routes>
     </React.StrictMode>
   </Router>
