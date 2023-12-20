@@ -116,6 +116,19 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// Get top 10 blog posts by view count
+router.get('/top-posts', async (req, res) => {
+  try {
+    // Find the top 10 blog posts sorted by view count in descending order
+    const topPosts = await BlogPost.find().sort({ viewCount: -1 }).limit(10);
+
+    res.status(200).json({ topPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Apply authMiddleware to all remaining routes
 router.use('/blog-posts', authMiddleware);
 
