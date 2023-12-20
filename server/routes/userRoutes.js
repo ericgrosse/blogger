@@ -116,8 +116,11 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// Apply authMiddleware to all remaining routes
+router.use('/blog-posts', authMiddleware);
+
 // Get all blog posts for the logged-in user
-router.get('/blog-posts', authMiddleware, async (req, res) => {
+router.get('/blog-posts', async (req, res) => {
   try {
     // Extract the user's ID
     const userId = req.user._id;
@@ -133,7 +136,7 @@ router.get('/blog-posts', authMiddleware, async (req, res) => {
 });
 
 // Get a specific blog post for the logged-in user
-router.get('/blog-posts/:postId', authMiddleware, async (req, res) => {
+router.get('/blog-posts/:postId', async (req, res) => {
   try {
     // Extract the user's ID and the requested blog post ID
     const userId = req.user._id;
@@ -154,7 +157,7 @@ router.get('/blog-posts/:postId', authMiddleware, async (req, res) => {
 });
 
 // Create a new blog post
-router.post('/blog-post', authMiddleware, async (req, res) => {
+router.post('/blog-posts', async (req, res) => {
   try {
     const { title, content, viewCount, datePublished, dateLastEdited } = req.body;
 
@@ -194,7 +197,7 @@ router.post('/blog-post', authMiddleware, async (req, res) => {
 });
 
 // Update a blog post
-router.put('/blog-posts/:postId', authMiddleware, async (req, res) => {
+router.put('/blog-posts/:postId', async (req, res) => {
   try {
     const { title, content } = req.body;
     const { postId } = req.params;
@@ -229,7 +232,7 @@ router.put('/blog-posts/:postId', authMiddleware, async (req, res) => {
 });
 
 // Delete a blog post
-router.delete('/blog-posts/:postId', authMiddleware, async (req, res) => {
+router.delete('/blog-posts/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
 
