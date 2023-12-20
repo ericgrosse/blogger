@@ -34,6 +34,11 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
 
+// Serve React app during development
+if (process.env.NODE_ENV === 'development') {
+  app.use(express.static(path.join(__dirname, '../public')));
+}
+
 // Routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/user', userRoutes);
@@ -44,5 +49,5 @@ app.use((req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
