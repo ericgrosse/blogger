@@ -119,6 +119,33 @@ router.post('/logout', (req, res) => {
 // Apply authMiddleware to all remaining routes
 router.use('/blog-posts', authMiddleware);
 
+// Delete a user and associated blog posts
+router.delete('/delete-user', async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Delete the user
+    const deletedUser = await User.findOneAndDelete({ _id: userId });
+
+    // Check if the user exists
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete all blog posts associated with the user
+    const deletedBlogPosts = await BlogPost.deleteMany({ userId });
+
+    res.status(200).json({
+      message: 'User and associated blog posts deleted successfully',
+      deletedUser,
+      deletedBlogPosts,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get all blog posts for the logged-in user
 router.get('/blog-posts', async (req, res) => {
   try {
