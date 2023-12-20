@@ -136,6 +136,64 @@ router.get('/top-posts', async (req, res) => {
   }
 });
 
+// Get all blog posts for user
+router.get('/:handle/blog-posts', async (req, res) => {
+  try {
+    const { handle } = req.params;
+
+    // Find the user based on the handle
+    const user = await User.findOne({ handle });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find all blog posts for the user and populate user details
+    const userBlogPosts = await BlogPost.find({ userId: user._id })
+      .populate('userId', 'handle displayName')
+      .lean();
+
+    // Destructure user details and create an updated array
+    const updatedBlogPosts = userBlogPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
+
+    res.status(200).json({ blogPosts: updatedBlogPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a specific blog post
+router.get('/:handle/blog-posts/:postId', async (req, res) => {
+  try {
+    const { handle, postId } = req.params;
+
+    // Find the user based on the handle
+    const user = await User.findOne({ handle });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find the requested blog post for the user
+    const userBlogPost = await BlogPost.findOne({ userId: user._id, _id: postId })
+      .populate('userId', 'handle displayName'); // Populate user details
+
+    if (!userBlogPost) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+
+    // Destructure user details
+    const { userId, ...rest } = userBlogPost.toObject();
+    const updatedBlogPost = { user: userId, ...rest };
+
+    res.status(200).json({ blogPost: updatedBlogPost });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Apply authMiddleware to all remaining routes
 router.use('/blog-posts', authMiddleware);
 
@@ -160,53 +218,6 @@ router.delete('/delete-user', async (req, res) => {
       deletedUser,
       deletedBlogPosts,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Get all blog posts for the logged-in user
-router.get('/blog-posts', async (req, res) => {
-  try {
-    // Extract the user's ID
-    const userId = req.user._id;
-
-    // Find all blog posts for the user and populate user details
-    const userBlogPosts = await BlogPost.find({ userId })
-      .populate('userId', 'handle displayName')
-      .lean()
-
-    // Destructure user details and create an updated array
-    const updatedBlogPosts = userBlogPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
-
-    res.status(200).json({ blogPosts: updatedBlogPosts });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Get a specific blog post for the logged-in user
-router.get('/blog-posts/:postId', async (req, res) => {
-  try {
-    // Extract the user's ID and the requested blog post ID
-    const userId = req.user._id;
-    const { postId } = req.params;
-
-    // Find the requested blog post for the user
-    const userBlogPost = await BlogPost.findOne({ userId, _id: postId })
-      .populate('userId', 'handle displayName'); // Populate user details
-
-    if (!userBlogPost) {
-      return res.status(404).json({ error: 'Blog post not found' });
-    }
-
-    // Destructure user details
-    const { userId: user, ...rest } = userBlogPost.toObject();
-    const updatedBlogPost = { user, ...rest };
-
-    res.status(200).json({ blogPost: updatedBlogPost });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
