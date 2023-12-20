@@ -29,6 +29,7 @@ function App() {
               {topPosts.map((post) => (
                 <li key={post._id}>
                   <strong>Title:</strong> {post.title}<br />
+                  <strong>Author:</strong> {post.user.displayName} {`@${post.user.handle}`}<br />
                   <strong>Content:</strong> {post.content}<br />
                   <strong>View Count:</strong> {post.viewCount}<br />
                   <strong>Date Published:</strong> {new Date(post.datePublished).toLocaleString()}<br />

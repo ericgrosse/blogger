@@ -129,7 +129,7 @@ router.get('/top-posts', async (req, res) => {
     // Destructure user details and create an updated array
     const updatedTopPosts = topPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
 
-    res.status(200).json({ updatedTopPosts });
+    res.status(200).json({ topPosts: updatedTopPosts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
