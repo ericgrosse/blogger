@@ -38,6 +38,11 @@ db.once('open', () => console.log('Connected to MongoDB'));
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/user', userRoutes);
 
+// Add middleware for handling unmatched routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint Not Found' });
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
