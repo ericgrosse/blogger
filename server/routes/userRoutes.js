@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const BlogPost = require('../models/BlogPost');
 const authMiddleware = require('../middleware/authMiddleware');
@@ -50,7 +51,10 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    const newUser = new User({ displayName, handle, email, password });
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ displayName, handle, email, password: hashedPassword });
     await newUser.save();
 
     // Generate JWT token
@@ -78,8 +82,10 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Check if the password is correct
-    if (user.password !== password) {
+    // Compare the entered password with the stored hash
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -111,7 +117,7 @@ router.post('/logout', (req, res) => {
 });
 
 // Create a new blog post
-router.post('/post', authMiddleware, async (req, res) => {
+router.post('/blog-post', authMiddleware, async (req, res) => {
   try {
     const { title, content, viewCount, datePublished, dateLastEdited } = req.body;
 
