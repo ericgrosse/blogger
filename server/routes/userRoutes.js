@@ -116,6 +116,43 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// Get all blog posts for the logged-in user
+router.get('/blog-posts', authMiddleware, async (req, res) => {
+  try {
+    // Extract the user's ID
+    const userId = req.user._id;
+
+    // Find all blog posts for the user
+    const userBlogPosts = await BlogPost.find({ userId });
+
+    res.status(200).json({ blogPosts: userBlogPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a specific blog post for the logged-in user
+router.get('/blog-posts/:postId', authMiddleware, async (req, res) => {
+  try {
+    // Extract the user's ID and the requested blog post ID
+    const userId = req.user._id;
+    const { postId } = req.params;
+
+    // Find the requested blog post for the user
+    const userBlogPost = await BlogPost.findOne({ userId, _id: postId });
+
+    if (!userBlogPost) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+
+    res.status(200).json({ blogPost: userBlogPost });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Create a new blog post
 router.post('/blog-post', authMiddleware, async (req, res) => {
   try {
@@ -150,6 +187,61 @@ router.post('/blog-post', authMiddleware, async (req, res) => {
     const updatedBlogPost = { user: userId, ...rest };
 
     res.status(201).json({ message: 'Blog post created successfully', blogPost: updatedBlogPost });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update a blog post
+router.put('/blog-posts/:postId', authMiddleware, async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const { postId } = req.params;
+
+    // Check if title is missing
+    if (!title) {
+      return res.status(400).json({ error: 'Missing required field: title' });
+    }
+
+    // Check if content is missing
+    if (!content) {
+      return res.status(400).json({ error: 'Missing required field: content' });
+    }
+
+    // Find the blog post by postId and userId
+    const updatedBlogPost = await BlogPost.findOneAndUpdate(
+      { _id: postId, userId: req.user._id },
+      { title, content, dateLastEdited: Date.now() },
+      { new: true }
+    );
+
+    // Check if the blog post exists
+    if (!updatedBlogPost) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+
+    res.status(200).json({ message: 'Blog post updated successfully', blogPost: updatedBlogPost });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a blog post
+router.delete('/blog-posts/:postId', authMiddleware, async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Find and delete the blog post by postId and userId
+    const deletedBlogPost = await BlogPost.findOneAndDelete({ _id: postId, userId: req.user._id });
+
+    // Check if the blog post exists
+    if (!deletedBlogPost) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+
+    res.status(200).json({ message: 'Blog post deleted successfully', blogPost: deletedBlogPost });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
