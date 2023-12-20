@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
+import Register from './components/Register/Register';
 import BlogPost from './components/BlogPost/BlogPost'
 import reportWebVitals from './reportWebVitals';
 
@@ -14,6 +15,7 @@ root.render(
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/:handle/:postId" element={<BlogPost />} />
       </Routes>
     </React.StrictMode>
