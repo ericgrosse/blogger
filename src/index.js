@@ -4,11 +4,16 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
+import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import CreateBlogPost from './components/CreateBlogPost/CreateBlogPost';
 import EditBlogPost from './components/EditBlogPost/EditBlogPost';
 import ViewBlogPost from './components/ViewBlogPost/ViewBlogPost';
 import reportWebVitals from './reportWebVitals';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
+library.add(fas);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -17,6 +22,7 @@ root.render(
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/create-post" element={<CreateBlogPost />} />
         <Route path="/:handle/:postId/edit-post" element={<EditBlogPost />} />
