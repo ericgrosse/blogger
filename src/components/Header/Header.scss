@@ -1,3 +1,73 @@
 .Header {
+  background-color: #3DA463;
+  color: white;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
 
+  .logo {
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
+  }
+
+  .sign-in:hover {
+    cursor: pointer;
+  }
+
+  .create-post, .dropdown {
+    display: inline-block;
+  }
+
+  .create-post {
+    margin-right: 20px;
+    position: relative;
+    top: -2px;
+  }
+
+  .create-post:hover {
+    cursor: pointer;
+  }
+
+  .user-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    position: relative;
+
+    &.active {
+      .dropdown-content {
+        display: block;
+      }
+    }
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 38px;
+    right: -20px;
+    background-color: #3DA463;
+    min-width: 134px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .dropdown-option {
+    font-size: 16px;
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+    display: block;
+
+    &:hover {
+      background-color: #43B86E;
+    }
+  }
+
+  .font-awesome-icon {
+    margin-right: 4px;
+  }
 }
