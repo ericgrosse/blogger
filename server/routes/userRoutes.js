@@ -60,7 +60,16 @@ router.post('/register', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(201).json({ message: 'User registered successfully', token, user: { _id: newUser._id, email: newUser.email } });
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: {
+        _id: newUser._id,
+        displayName: newUser.displayName,
+        username: newUser.username,
+        email: newUser.email
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -92,7 +101,16 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ message: 'Login successful', token, user: { _id: user._id, email: user.email } });
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        _id: user._id,
+        displayName: user.displayName,
+        username: user.username,
+        email: user.email
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
