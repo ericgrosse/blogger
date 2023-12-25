@@ -183,6 +183,10 @@ router.get('/:username/blog-posts/:postId', async (req, res) => {
       return res.status(404).json({ error: 'Blog post not found' });
     }
 
+    // Increment the viewCount by 1
+    userBlogPost.viewCount += 1;
+    await userBlogPost.save();
+
     // Destructure user details
     const { userId, ...rest } = userBlogPost.toObject();
     const updatedBlogPost = { user: userId, ...rest };
