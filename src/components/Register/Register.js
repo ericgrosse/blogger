@@ -24,8 +24,9 @@ function Register() {
     try {
       const response = await axios.post('http://localhost:5000/api/user/register', formData);
 
-      // Store the token in localStorage
+      // Store the token and username in localStorage
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', response.data.user.username);
 
       console.log('Registration successful:', response.data);
       

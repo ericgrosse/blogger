@@ -31,6 +31,7 @@ function Header() {
 
   const handleSignOut = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     navigate('/');
   };
 
