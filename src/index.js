@@ -18,17 +18,15 @@ library.add(fas);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
-    <React.StrictMode>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/create-post" element={<CreateBlogPost />} />
-        <Route path="/:username/:postId/edit-post" element={<EditBlogPost />} />
-        <Route path="/:username/:postId" element={<ViewBlogPost />} />
-      </Routes>
-    </React.StrictMode>
+    <Header />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/create-post" element={<CreateBlogPost />} />
+      <Route path="/:username/:postId/edit-post" element={<EditBlogPost />} />
+      <Route path="/:username/:postId" element={<ViewBlogPost />} />
+    </Routes>
   </Router>
 );
 
