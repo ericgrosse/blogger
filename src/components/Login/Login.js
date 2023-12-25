@@ -39,8 +39,8 @@ function Login() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <label>
-          Email or Handle:
-          <input type="text" name="identifier" value={formData.handle} onChange={handleChange} />
+          Email or Username:
+          <input type="text" name="identifier" value={formData.identifier} onChange={handleChange} />
         </label>
         <label>
           Password:

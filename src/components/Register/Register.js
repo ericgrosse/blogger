@@ -6,7 +6,7 @@ import './Register.scss';
 function Register() {
   const [formData, setFormData] = useState({
     displayName: '',
-    handle: '',
+    username: '',
     email: '',
     password: '',
   });
@@ -50,8 +50,8 @@ function Register() {
           />
         </label>
         <label>
-          Handle:
-          <input type="text" name="handle" value={formData.handle} onChange={handleChange} />
+          Username:
+          <input type="text" name="username" value={formData.username} onChange={handleChange} />
         </label>
         <label>
           Email:

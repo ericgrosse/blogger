@@ -6,7 +6,7 @@ const User = require('../models/User');
 const BlogPost = require('../models/BlogPost');
 const authMiddleware = require('../middleware/authMiddleware');
 
-const usernameRegex = /^[a-zA-Z0-9_]{1,15}$/; // Regular expression for Twitter-like handles
+const usernameRegex = /^[a-zA-Z0-9_]{1,15}$/;
 const minPasswordLength = 8;
 const maxPasswordLength = 64;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/; // Password complexity regex without special characters
@@ -15,7 +15,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format validatio
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
-    const { displayName, handle, email, password } = req.body;
+    const { displayName, username, email, password } = req.body;
 
     // Check if displayName is empty
     if (!displayName.trim()) {
@@ -33,15 +33,15 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
-    // Check if the handle follows the rules
-    if (!usernameRegex.test(handle)) {
-      return res.status(400).json({ error: 'Invalid handle format. Handles can only contain letters, numbers, and underscores, and must be 1 to 15 characters long.' });
+    // Check if the username is valid
+    if (!usernameRegex.test(username)) {
+      return res.status(400).json({ error: 'Invalid username format. Usernames can only contain letters, numbers, and underscores, and must be 1 to 15 characters long.' });
     }
 
-    // Check if the handle is unique
-    const handleExists = await User.findOne({ handle });
-    if (handleExists) {
-      return res.status(400).json({ error: 'Handle already exists' });
+    // Check if the username is unique
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      return res.status(400).json({ error: 'Username already exists' });
     }
 
     // Check if the password meets criteria
@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ displayName, handle, email, password: hashedPassword });
+    const newUser = new User({ displayName, username, email, password: hashedPassword });
     await newUser.save();
 
     // Generate JWT token
@@ -67,14 +67,14 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login with email or handle
+// Login with email or username
 router.post('/login', async (req, res) => {
   try {
     const { identifier, password } = req.body;
 
-    // Find the user by email or handle
+    // Find the user by email or username
     const user = await User.findOne({
-      $or: [{ email: identifier }, { handle: identifier }],
+      $or: [{ email: identifier }, { username: identifier }],
     });
 
     // Check if the user exists
@@ -123,7 +123,7 @@ router.get('/top-posts', async (req, res) => {
     const topPosts = await BlogPost.find()
       .sort({ viewCount: -1 })
       .limit(10)
-      .populate('userId', 'handle displayName')
+      .populate('userId', 'username displayName')
       .lean();
 
     // Destructure user details and create an updated array
@@ -137,12 +137,12 @@ router.get('/top-posts', async (req, res) => {
 });
 
 // Get all blog posts for user
-router.get('/:handle/blog-posts', async (req, res) => {
+router.get('/:username/blog-posts', async (req, res) => {
   try {
-    const { handle } = req.params;
+    const { username } = req.params;
 
-    // Find the user based on the handle
-    const user = await User.findOne({ handle });
+    // Find the user based on the username
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -150,7 +150,7 @@ router.get('/:handle/blog-posts', async (req, res) => {
 
     // Find all blog posts for the user and populate user details
     const userBlogPosts = await BlogPost.find({ userId: user._id })
-      .populate('userId', 'handle displayName')
+      .populate('userId', 'username displayName')
       .lean();
 
     // Destructure user details and create an updated array
@@ -164,12 +164,12 @@ router.get('/:handle/blog-posts', async (req, res) => {
 });
 
 // Get a specific blog post
-router.get('/:handle/blog-posts/:postId', async (req, res) => {
+router.get('/:username/blog-posts/:postId', async (req, res) => {
   try {
-    const { handle, postId } = req.params;
+    const { username, postId } = req.params;
 
-    // Find the user based on the handle
-    const user = await User.findOne({ handle });
+    // Find the user based on the username
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -177,7 +177,7 @@ router.get('/:handle/blog-posts/:postId', async (req, res) => {
 
     // Find the requested blog post for the user
     const userBlogPost = await BlogPost.findOne({ userId: user._id, _id: postId })
-      .populate('userId', 'handle displayName'); // Populate user details
+      .populate('userId', 'username displayName'); // Populate user details
 
     if (!userBlogPost) {
       return res.status(404).json({ error: 'Blog post not found' });
@@ -251,7 +251,7 @@ router.post('/blog-posts', async (req, res) => {
     await newBlogPost.save();
 
     // Populate the user details in the response
-    await BlogPost.populate(newBlogPost, { path: 'userId', select: 'handle displayName' });
+    await BlogPost.populate(newBlogPost, { path: 'userId', select: 'username displayName' });
 
     // Rename userId to user in the response
     const { userId, ...rest } = newBlogPost.toObject();
@@ -286,7 +286,7 @@ router.put('/blog-posts/:postId', async (req, res) => {
       { title, content, dateLastEdited: Date.now() },
       { new: true }
     )
-      .populate('userId', 'handle displayName'); // Populate user details
+      .populate('userId', 'username displayName'); // Populate user details
 
     // Check if the blog post exists
     if (!blogPostUpdate) {

@@ -25,8 +25,8 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/create-post" element={<CreateBlogPost />} />
-        <Route path="/:handle/:postId/edit-post" element={<EditBlogPost />} />
-        <Route path="/:handle/:postId" element={<ViewBlogPost />} />
+        <Route path="/:username/:postId/edit-post" element={<EditBlogPost />} />
+        <Route path="/:username/:postId" element={<ViewBlogPost />} />
       </Routes>
     </React.StrictMode>
   </Router>

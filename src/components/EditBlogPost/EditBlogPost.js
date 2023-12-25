@@ -10,12 +10,12 @@ function EditBlogPost() {
   });
   const [blogPost, setBlogPost] = useState([]);
   
-  const { handle, postId } = useParams();
+  const { username, postId } = useParams();
   const navigate = useNavigate();
 
   const getBlogPost = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/user/${handle}/blog-posts/${postId}`);
+      const response = await axios.get(`http://localhost:5000/api/user/${username}/blog-posts/${postId}`);
       const data = response.data;
       setBlogPost(data.blogPost);
       setFormData({
@@ -52,10 +52,10 @@ function EditBlogPost() {
 
       console.log('Blog post updated successfully:', response.data);
 
-      const { user: { handle }, _id } = response.data.blogPost;
+      const { user: { username }, _id } = response.data.blogPost;
 
       // Navigate to viewing the updated blog post
-      navigate(`/${handle}/${_id}`);
+      navigate(`/${username}/${_id}`);
 
     } catch (error) {
       console.error('Error updating blog post:', error);

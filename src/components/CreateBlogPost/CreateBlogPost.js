@@ -36,10 +36,10 @@ function CreateBlogPost() {
 
       console.log('Blog post created successfully:', response.data);
 
-      const { user: { handle }, _id } = response.data.blogPost;
+      const { user: { username }, _id } = response.data.blogPost;
 
       // Navigate to viewing the created blog post
-      navigate(`/${handle}/${_id}`);
+      navigate(`/${username}/${_id}`);
 
     } catch (error) {
       console.error('Error creating blog post:', error);

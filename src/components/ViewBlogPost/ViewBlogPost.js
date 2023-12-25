@@ -5,11 +5,11 @@ import './ViewBlogPost.scss';
 
 function ViewBlogPost() {
   const [blogPost, setBlogPost] = useState([]);
-  const { handle, postId } = useParams();
+  const { username, postId } = useParams();
 
   const getBlogPost = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/user/${handle}/blog-posts/${postId}`);
+      const response = await axios.get(`http://localhost:5000/api/user/${username}/blog-posts/${postId}`);
       const data = response.data;
       setBlogPost(data.blogPost);
     } catch (error) {
@@ -27,7 +27,7 @@ function ViewBlogPost() {
       <h1>Blog Post</h1>
       {blogPost && blogPost.user && (
         <div>
-          <strong>Author:</strong> {blogPost.user.displayName} {`@${blogPost.user.handle}`}<br />
+          <strong>Author:</strong> {blogPost.user.displayName} {`@${blogPost.user.username}`}<br />
           <strong>Content:</strong> {blogPost.content}<br />
           <strong>View Count:</strong> {blogPost.viewCount}<br />
           <strong>Date Published:</strong> {new Date(blogPost.datePublished).toLocaleString()}<br />
