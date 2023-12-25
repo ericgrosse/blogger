@@ -13,7 +13,11 @@
     font-size: 24px;
   }
 
-  .sign-in:hover {
+  .sign-in {
+    margin-right: 16px;
+  }
+
+  .sign-in:hover, .register:hover {
     cursor: pointer;
   }
 

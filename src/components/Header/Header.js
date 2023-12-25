@@ -13,6 +13,10 @@ function Header() {
     navigate('/login');
   };
 
+  const handleRegister = () => {
+    navigate('/register');
+  };
+
   const handleCreatePost = () => {
     navigate('/create-post');
   };
@@ -65,7 +69,10 @@ function Header() {
         {localStorage.getItem('token') ? (
           renderDropdown()
         ) : (
-          <span className="sign-in" onClick={handleSignIn}>Sign In</span>
+          <>
+            <span className="sign-in" onClick={handleSignIn}>Sign In</span>
+            <span className="register" onClick={handleRegister}>Register</span>
+          </>
         )}
       </div>
     </div>
