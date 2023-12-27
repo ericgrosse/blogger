@@ -6,6 +6,7 @@ import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
+import Profile from './components/Profile/Profile';
 import CreateBlogPost from './components/CreateBlogPost/CreateBlogPost';
 import EditBlogPost from './components/EditBlogPost/EditBlogPost';
 import ViewBlogPost from './components/ViewBlogPost/ViewBlogPost';
@@ -20,6 +21,7 @@ root.render(
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/create-post" element={<CreateBlogPost />} />
       <Route path="/:username/:postId/edit-post" element={<EditBlogPost />} />
       <Route path="/:username/:postId" element={<ViewBlogPost />} />

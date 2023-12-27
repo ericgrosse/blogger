@@ -154,6 +154,32 @@ router.get('/top-posts', async (req, res) => {
   }
 });
 
+// Get user details (excluding password) by username
+router.get('/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    // Find the user by username excluding the password field
+    const user = await User.findOne({ username }).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        displayName: user.displayName,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get all blog posts for user
 router.get('/:username/blog-posts', async (req, res) => {
   try {

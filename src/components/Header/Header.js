@@ -22,11 +22,12 @@ function Header() {
   };
 
   const handleViewProfile = () => {
-    console.log('Todo');
+    navigate('/profile');
   };
 
   const handleViewPosts = () => {
-    console.log('Todo');
+    const username = localStorage.getItem('username');
+    navigate(`/${username}/posts`);
   };
 
   const handleSignOut = () => {
