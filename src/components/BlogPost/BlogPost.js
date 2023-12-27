@@ -11,7 +11,9 @@ function BlogPost(props) {
       <Link to={`/${props.post.user.username}/${props.post._id}`} style={{ textDecoration: 'none' }}>
         <h1 className="title">{props.post.title}</h1>
       </Link>
-      <p className="author">By {props.post.user.displayName} ({`@${props.post.user.username}`})</p>
+      <Link to={`/${props.post.user.username}/posts`} style={{ textDecoration: 'none' }}>
+        <p className="author">By {props.post.user.displayName} ({`@${props.post.user.username}`})</p>
+      </Link>
       <p className="date-published">Date Published: {new Date(props.post.datePublished).toLocaleString()}</p>
       {props.post.dateLastEdited && (
         <p className="date-edited">Date Last Edited: {new Date(props.post.dateLastEdited).toLocaleString()}</p>
