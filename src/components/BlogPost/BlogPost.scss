@@ -1,0 +1,36 @@
+.BlogPost {
+  display: flex;
+  flex-direction: column;
+  //align-items: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-width: 576px;
+  margin: 20px auto;
+  position: relative;
+
+  .title {
+    margin: 0;
+  }
+
+  .author {
+    margin-bottom: 10px;
+  }
+
+  .date-published, .date-edited {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .view-count {
+    position: absolute;
+    bottom: -6px; 
+    right: 14px;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 5px;
+    }
+  }
+}

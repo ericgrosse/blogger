@@ -7,7 +7,7 @@ const blogPostSchema = new Schema({
     content: { type: String, required: true },
     viewCount: { type: Number, default: 0 },
     datePublished: { type: Date, default: Date.now() },
-    dateLastEdited: { type: Date, default: Date.now() }
+    dateLastEdited: { type: Date }
 });
 
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown'; // Import react-markdown
+import ReactMarkdown from 'react-markdown';
 import './CreateBlogPost.scss';
 
 function CreateBlogPost() {

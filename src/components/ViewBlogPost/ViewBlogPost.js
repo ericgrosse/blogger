@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ViewBlogPost.scss';
+import BlogPost from '../BlogPost/BlogPost';
 
 function ViewBlogPost() {
   const [blogPost, setBlogPost] = useState([]);
@@ -23,16 +24,9 @@ function ViewBlogPost() {
   }, []); // Empty dependency array ensures this effect runs only once, equivalent to componentDidMount
 
   return (
-    <div className="BlogPost">
-      <h1>Blog Post</h1>
+    <div className="ViewBlogPost">
       {blogPost && blogPost.user && (
-        <div>
-          <strong>Author:</strong> {blogPost.user.displayName} {`@${blogPost.user.username}`}<br />
-          <strong>Content:</strong> {blogPost.content}<br />
-          <strong>View Count:</strong> {blogPost.viewCount}<br />
-          <strong>Date Published:</strong> {new Date(blogPost.datePublished).toLocaleString()}<br />
-          <strong>Date Last Edited:</strong> {new Date(blogPost.dateLastEdited).toLocaleString()}<br />
-        </div>
+        <BlogPost post={blogPost} />
       )}
     </div>
   );
