@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Home.scss';
+import BlogPost from './../BlogPost/BlogPost';
 
 function Home() {
   const [topPosts, setTopPosts] = useState([]);
@@ -23,26 +24,12 @@ function Home() {
 
   return (
     <div className="Home">
-      <h1>Blogger</h1>
       {topPosts.length > 0 && (
         <div>
-          <h2>Top Posts:</h2>
-          <ul>
+          <h1 className="top-posts">Top Posts</h1>
             {topPosts.map((post) => (
-              <li key={post._id}>
-                <strong>Title:</strong> 
-                <Link to={`/${post.user.username}/${post._id}`}>
-                  {post.title}
-                </Link>
-                <br />
-                <strong>Author:</strong> {post.user.displayName} {`@${post.user.username}`}<br />
-                <strong>Content:</strong> {post.content}<br />
-                <strong>View Count:</strong> {post.viewCount}<br />
-                <strong>Date Published:</strong> {new Date(post.datePublished).toLocaleString()}<br />
-                <strong>Date Last Edited:</strong> {new Date(post.dateLastEdited).toLocaleString()}<br />
-              </li>
+              <BlogPost key={post._id} post={post} />
             ))}
-          </ul>
         </div>
       )}
     </div>
