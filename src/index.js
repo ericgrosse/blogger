@@ -9,6 +9,7 @@ import Register from './components/Register/Register';
 import CreateBlogPost from './components/CreateBlogPost/CreateBlogPost';
 import EditBlogPost from './components/EditBlogPost/EditBlogPost';
 import ViewBlogPost from './components/ViewBlogPost/ViewBlogPost';
+import UserBlogPosts from './components/UserBlogPosts/UserBlogPosts';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -22,6 +23,7 @@ root.render(
       <Route path="/create-post" element={<CreateBlogPost />} />
       <Route path="/:username/:postId/edit-post" element={<EditBlogPost />} />
       <Route path="/:username/:postId" element={<ViewBlogPost />} />
+      <Route path="/:username/posts" element={<UserBlogPosts />} />
     </Routes>
   </Router>
 );

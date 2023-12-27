@@ -50,7 +50,7 @@ function CreateBlogPost() {
 
   return (
     <div className="CreateBlogPost">
-      <h2>Create Blog Post</h2>
+      <h1>Create Blog Post</h1>
       <form onSubmit={handleSubmit} className="form-container">
         <div className="form-inputs">
           <label htmlFor="title">Title:</label>

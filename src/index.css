@@ -2,3 +2,7 @@ body {
   margin: 0;
   font-family: sans-serif;
 }
+
+ul {
+  padding-left: 16px;
+}
