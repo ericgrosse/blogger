@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown'; // Import react-markdown
 import './CreateBlogPost.scss';
 
 function CreateBlogPost() {
@@ -50,25 +51,35 @@ function CreateBlogPost() {
   return (
     <div className="CreateBlogPost">
       <h2>Create Blog Post</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-        />
+      <form onSubmit={handleSubmit} className="form-container">
+        <div className="form-inputs">
+          <label htmlFor="title">Title:</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+          />
 
-        <label htmlFor="content">Content:</label>
-        <textarea
-          id="content"
-          name="content"
-          value={formData.content}
-          onChange={handleChange}
-        />
+          <label htmlFor="content">Content:</label>
+          <textarea
+            id="content"
+            name="content"
+            value={formData.content}
+            onChange={handleChange}
+          />
 
-        <button type="submit">Submit</button>
+          <button type="submit">Submit</button>
+        </div>
+
+        <div className="preview-container">
+          <p class="preview">Preview:</p>
+          <div className="markdown-preview">
+            <h1 class="title">{formData.title}</h1>
+            <ReactMarkdown>{formData.content}</ReactMarkdown>
+          </div>
+        </div>
       </form>
     </div>
   );
