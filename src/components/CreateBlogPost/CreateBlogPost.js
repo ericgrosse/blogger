@@ -74,9 +74,9 @@ function CreateBlogPost() {
         </div>
 
         <div className="preview-container">
-          <p class="preview">Preview:</p>
+          <p className="preview">Preview:</p>
           <div className="markdown-preview">
-            <h1 class="title">{formData.title}</h1>
+            <h1 className="title">{formData.title}</h1>
             <ReactMarkdown>{formData.content}</ReactMarkdown>
           </div>
         </div>
