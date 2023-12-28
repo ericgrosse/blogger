@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { APIBase } from '../../helpers/APIHelper';
 import './Modal.scss';
 
 const Modal = ({ title, isOpen, onClose, modalType }) => {
@@ -39,16 +40,16 @@ const Modal = ({ title, isOpen, onClose, modalType }) => {
       };
 
       if (modalType === 'displayName') {
-        await axios.put('http://localhost:5000/api/user/update-display-name', {
+        await axios.put(`${APIBase}/update-display-name`, {
           displayName: newDisplayName
         }, { headers });
       } else if (modalType === 'email') {
-        await axios.put('http://localhost:5000/api/user/update-email', {
+        await axios.put(`${APIBase}/update-email`, {
           oldEmail,
           newEmail
         }, { headers });
       } else if (modalType === 'password') {
-        await axios.put('http://localhost:5000/api/user/update-password', {
+        await axios.put(`${APIBase}/update-password`, {
           oldPassword,
           newPassword
         }, { headers });

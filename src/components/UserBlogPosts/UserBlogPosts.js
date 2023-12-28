@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import './UserBlogPosts.scss';
 import BlogPost from './../BlogPost/BlogPost';
+import { APIBase } from '../../helpers/APIHelper';
+import './UserBlogPosts.scss';
 
 function UserBlogPosts() {
   const [userPosts, setUserPosts] = useState([]);
@@ -10,7 +11,7 @@ function UserBlogPosts() {
 
   const getUserBlogPosts = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/user/${username}/blog-posts`);
+      const response = await axios.get(`${APIBase}/${username}/blog-posts`);
       const data = response.data;
       setUserPosts(data.blogPosts);
     } catch (error) {

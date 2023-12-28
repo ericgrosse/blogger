@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Home.scss';
 import BlogPost from './../BlogPost/BlogPost';
+import { APIBase } from '../../helpers/APIHelper';
+import './Home.scss';
 
 function Home() {
   const [topPosts, setTopPosts] = useState([]);
 
   const getTopPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/user/top-posts');
+      const response = await axios.get(`${APIBase}/top-posts`);
       const data = response.data;
       setTopPosts(data.topPosts);
     } catch (error) {

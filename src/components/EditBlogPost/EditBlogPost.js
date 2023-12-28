@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { APIBase } from '../../helpers/APIHelper';
 import './EditBlogPost.scss';
 
 function EditBlogPost() {
@@ -15,7 +16,7 @@ function EditBlogPost() {
 
   const getBlogPost = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/user/${username}/blog-posts/${postId}`);
+      const response = await axios.get(`${APIBase}/${username}/blog-posts/${postId}`);
       const data = response.data;
       setBlogPost(data.blogPost);
       setFormData({
@@ -48,7 +49,7 @@ function EditBlogPost() {
       };
 
       // Make the PUT request
-      const response = await axios.put(`http://localhost:5000/api/user/blog-posts/${postId}`, formData, { headers });
+      const response = await axios.put(`${APIBase}/blog-posts/${postId}`, formData, { headers });
 
       console.log('Blog post updated successfully:', response.data);
 

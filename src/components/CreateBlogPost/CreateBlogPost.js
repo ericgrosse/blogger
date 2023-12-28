@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import { APIBase } from '../../helpers/APIHelper';
 import './CreateBlogPost.scss';
 
 function CreateBlogPost() {
@@ -33,7 +34,7 @@ function CreateBlogPost() {
       };
 
       // Make the POST request
-      const response = await axios.post('http://localhost:5000/api/user/blog-posts', formData, { headers });
+      const response = await axios.post(`${APIBase}/blog-posts`, formData, { headers });
 
       console.log('Blog post created successfully:', response.data);
 

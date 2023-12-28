@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { APIBase } from '../../helpers/APIHelper';
 import './Login.scss';
 
 function Login() {
@@ -20,7 +21,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/user/login', formData);
+      const response = await axios.post(`${APIBase}/login`, formData);
 
       // Store the token and username in localStorage
       localStorage.setItem('token', response.data.token);

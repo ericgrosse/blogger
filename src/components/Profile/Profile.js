@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Modal from '../Modal/Modal'; // Adjust the path based on your project structure
+import Modal from '../Modal/Modal';
+import { APIBase } from '../../helpers/APIHelper';
 import './Profile.scss';
 
 function Profile() {
@@ -13,7 +14,7 @@ function Profile() {
 
     const getUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/user/${username}`);
+        const response = await axios.get(`${APIBase}/${username}`);
         setUser(response.data.user);
       } catch (error) {
         console.error('Error fetching user details:', error);

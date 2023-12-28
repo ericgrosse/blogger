@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { APIBase } from '../../helpers/APIHelper';
 import './Register.scss';
 
 function Register() {
@@ -22,7 +23,7 @@ function Register() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/user/register', formData);
+      const response = await axios.post(`${APIBase}/register`, formData);
 
       // Store the token and username in localStorage
       localStorage.setItem('token', response.data.token);
