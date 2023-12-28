@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
 import BlogPost from './../BlogPost/BlogPost';
@@ -9,6 +9,8 @@ import './UserBlogPosts.scss';
 function UserBlogPosts() {
   const [userPosts, setUserPosts] = useState([]);
   const { username } = useParams();
+  const storedUsername = localStorage.getItem('username');
+  const navigate = useNavigate();
 
   const getUserBlogPosts = async () => {
     try {
@@ -26,6 +28,17 @@ function UserBlogPosts() {
 
   return (
     <div className="UserBlogPosts">
+      {userPosts.length === 0 && (
+        <>
+          <h1 className="posts-by-user">No Posts Yet</h1>
+          {username === storedUsername && (
+            <div className="button-container">
+              <button onClick={() => navigate('/create-post')}>Create Post</button>
+            </div>
+          )}
+        </>
+      )}
+
       {userPosts.length > 0 && (
         <div>
           <h1 className="posts-by-user">Posts by {userPosts[0].user.displayName} (@{userPosts[0].user.username})</h1>

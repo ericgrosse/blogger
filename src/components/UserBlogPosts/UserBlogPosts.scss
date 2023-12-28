@@ -2,4 +2,17 @@
   .posts-by-user {
     text-align: center;
   }
+
+  .button-container {
+    text-align: center;
+  }
+
+  button {
+    padding: 10px;
+    background-color: #43B86E;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 }
