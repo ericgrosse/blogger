@@ -41,19 +41,14 @@ const Modal = ({ title, isOpen, onClose, modalType }) => {
       };
 
       if (modalType === 'displayName') {
-        await axios.put(`${APIBase}/update-display-name`, {
-          displayName: newDisplayName
-        }, { headers });
+        await axios.put(`${APIBase}/update-display-name`, { displayName: newDisplayName }, { headers });
+        toastr.success(`Successfully updated display name to ${newDisplayName}`);
       } else if (modalType === 'email') {
-        await axios.put(`${APIBase}/update-email`, {
-          oldEmail,
-          newEmail
-        }, { headers });
+        await axios.put(`${APIBase}/update-email`, { oldEmail, newEmail }, { headers });
+        toastr.success(`Successfully updated email to ${newEmail}`);
       } else if (modalType === 'password') {
-        await axios.put(`${APIBase}/update-password`, {
-          oldPassword,
-          newPassword
-        }, { headers });
+        await axios.put(`${APIBase}/update-password`, { oldPassword, newPassword }, { headers });
+        toastr.success('Successfully updated password');
       }
 
       resetInputFields();

@@ -10,18 +10,17 @@ function Profile() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
 
-  useEffect(() => {
+  const getUserDetails = async () => {
     const username = localStorage.getItem('username');
+    try {
+      const response = await axios.get(`${APIBase}/${username}`);
+      setUser(response.data.user);
+    } catch (error) {
+      toastr.error(`Error getting user details: ${error.response.data.error}`);
+    }
+  };
 
-    const getUserDetails = async () => {
-      try {
-        const response = await axios.get(`${APIBase}/${username}`);
-        setUser(response.data.user);
-      } catch (error) {
-        toastr.error(`Error getting user details: ${error.response.data.error}`);
-      }
-    };
-
+  useEffect(() => {
     getUserDetails();
   }, []);
 
@@ -33,6 +32,7 @@ function Profile() {
   const closeModal = () => {
     setModalType(null);
     setModalOpen(false);
+    getUserDetails(); // Refresh the user details in case any user property has been updated
   };
 
   return (
