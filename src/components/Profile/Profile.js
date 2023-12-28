@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import toastr from 'toastr';
 import Modal from '../Modal/Modal';
 import { APIBase } from '../../helpers/APIHelper';
 import './Profile.scss';
@@ -17,7 +18,7 @@ function Profile() {
         const response = await axios.get(`${APIBase}/${username}`);
         setUser(response.data.user);
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        toastr.error(`Error getting user details: ${error.response.data.error}`);
       }
     };
 

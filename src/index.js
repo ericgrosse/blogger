@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './index.css';
+import toastr from 'toastr';
+import reportWebVitals from './reportWebVitals';
+
+// Import components for routing
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
@@ -11,7 +14,13 @@ import CreateBlogPost from './components/CreateBlogPost/CreateBlogPost';
 import EditBlogPost from './components/EditBlogPost/EditBlogPost';
 import ViewBlogPost from './components/ViewBlogPost/ViewBlogPost';
 import UserBlogPosts from './components/UserBlogPosts/UserBlogPosts';
-import reportWebVitals from './reportWebVitals';
+
+// Import stylesheets
+import 'toastr/build/toastr.min.css';
+import './index.css';
+
+// Set the default duration for toastr notifications
+toastr.options.timeOut = 1750;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

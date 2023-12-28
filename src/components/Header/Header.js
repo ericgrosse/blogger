@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faSignOutAlt, faList, faPen, faNewspaper } from '@fortawesome/free-solid-svg-icons';
+import toastr from 'toastr';
 import './Header.scss';
 
 function Header() {
@@ -33,6 +34,7 @@ function Header() {
   const handleSignOut = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    toastr.success('Successfully signed out');
     navigate('/');
   };
 

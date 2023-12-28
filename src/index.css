@@ -6,3 +6,11 @@ body {
 ul {
   padding-left: 16px;
 }
+
+.toast-success {
+  background-color: #3DA463;
+}
+
+.toast-top-right {
+  margin-top: 48px;
+}

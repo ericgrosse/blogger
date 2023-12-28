@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import toastr from 'toastr';
 import BlogPost from './../BlogPost/BlogPost';
 import { APIBase } from '../../helpers/APIHelper';
 import './Home.scss';
@@ -13,7 +14,7 @@ function Home() {
       const data = response.data;
       setTopPosts(data.topPosts);
     } catch (error) {
-      console.error('Error fetching top posts:', error);
+      toastr.error(`Error getting top posts: ${error.response.data.error}`);
     }
   };
 

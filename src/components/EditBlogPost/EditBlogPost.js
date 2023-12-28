@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
 import './EditBlogPost.scss';
 
@@ -24,7 +25,7 @@ function EditBlogPost() {
         content: data.blogPost.content,
       });
     } catch (error) {
-      console.error('Error fetching blog post:', error);
+      toastr.error(`Error getting blog post: ${error.response.data.error}`);
     }
   };
 
@@ -50,17 +51,15 @@ function EditBlogPost() {
 
       // Make the PUT request
       const response = await axios.put(`${APIBase}/blog-posts/${postId}`, formData, { headers });
-
-      console.log('Blog post updated successfully:', response.data);
-
       const { user: { username }, _id } = response.data.blogPost;
+
+      toastr.success('Blog post successfully updated');
 
       // Navigate to viewing the updated blog post
       navigate(`/${username}/${_id}`);
 
     } catch (error) {
-      console.error('Error updating blog post:', error);
-      // Handle error (e.g., display an error message)
+      console.error(`Error updating blog post: ${error.response.data.error}`);
     }
   };
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toastr from 'toastr';
 import ReactMarkdown from 'react-markdown';
 import { APIBase } from '../../helpers/APIHelper';
 import './CreateBlogPost.scss';
@@ -35,17 +36,15 @@ function CreateBlogPost() {
 
       // Make the POST request
       const response = await axios.post(`${APIBase}/blog-posts`, formData, { headers });
-
-      console.log('Blog post created successfully:', response.data);
-
       const { user: { username }, _id } = response.data.blogPost;
-
+      
+      toastr.success('Blog post successfully created');
+      
       // Navigate to viewing the created blog post
       navigate(`/${username}/${_id}`);
 
     } catch (error) {
-      console.error('Error creating blog post:', error);
-      // Handle error (e.g., display an error message)
+      toastr.error(`Error creating blog post: ${error.response.data.error}`);
     }
   };
 

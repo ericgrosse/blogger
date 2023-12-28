@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
 import './Modal.scss';
 
@@ -61,11 +62,11 @@ const Modal = ({ title, isOpen, onClose, modalType }) => {
     } catch (error) {
       // Handle errors based on the type of request
       if (modalType === 'displayName') {
-        console.error('Error updating display name:', error);
+        toastr.error(`Error updating display name: ${error.response.data.error}`);
       } else if (modalType === 'email') {
-        console.error('Error updating email:', error);
+        toastr.error(`Error updating email: ${error.response.data.error}`);
       } else if (modalType === 'password') {
-        console.error('Error updating password:', error);
+        toastr.error(`Error updating password: ${error.response.data.error}`);
       }
     }
   };

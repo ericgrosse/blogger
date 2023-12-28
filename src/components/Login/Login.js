@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
 import './Login.scss';
 
@@ -27,12 +28,10 @@ function Login() {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', response.data.user.username);
 
-      console.log('Registration successful:', response.data);
-      
+      toastr.success('Logged in successfully');
       navigate('/');
     } catch (error) {
-      console.error('Error during registration:', error);
-      // Handle registration error (e.g., display an error message)
+      toastr.error(`Error during registration: ${error.response.data.error}`);
     }
   };
 
