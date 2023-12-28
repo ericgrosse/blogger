@@ -19,9 +19,9 @@ function Home() {
   };
 
   useEffect(() => {
-    // Fetch top 10 posts when the component mounts
+    // Get top 10 posts when the component mounts
     getTopPosts();
-  }, []); // Empty dependency array ensures this effect runs only once, equivalent to componentDidMount
+  }, []);
 
   return (
     <div className="Home">

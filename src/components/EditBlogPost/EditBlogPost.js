@@ -67,7 +67,7 @@ function EditBlogPost() {
   useEffect(() => {
     // Get the blog post when the component mounts
     getBlogPost();
-  }, []); // Empty dependency array ensures this effect runs only once, equivalent to componentDidMount
+  }, []);
 
   return (
     <div className="EditBlogPost">
