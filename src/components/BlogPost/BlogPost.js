@@ -1,19 +1,44 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './BlogPost.scss';
 import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-regular-svg-icons';
+import { faEye, faEdit, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 function BlogPost(props) {
+  const navigate = useNavigate();
+  const isCurrentUser = localStorage.getItem('username') === props.post.user.username;
+
+  const handleEditBlogPost = () => {
+    navigate(`/${props.post.user.username}/${props.post._id}/edit-post`);
+  };
+
+  const handleDeleteBlogPost = () => {
+    console.log('Todo');
+  };
+
   return (
     <div className="BlogPost">
-      <Link to={`/${props.post.user.username}/${props.post._id}`} style={{ textDecoration: 'none' }}>
-        <h1 className="title">{props.post.title}</h1>
-      </Link>
-      <Link to={`/${props.post.user.username}/posts`} style={{ textDecoration: 'none' }}>
-        <p className="author">By {props.post.user.displayName} ({`@${props.post.user.username}`})</p>
-      </Link>
+      {isCurrentUser && props.editable && (
+        <div className="action-buttons">
+          <button className="edit-button">
+            <FontAwesomeIcon icon={faEdit} onClick={handleEditBlogPost} />
+          </button>
+          <button className="delete-button">
+            <FontAwesomeIcon icon={faTrashCan} onClick={handleDeleteBlogPost} />
+          </button>
+        </div>
+      )}
+      <div>
+        <Link to={`/${props.post.user.username}/${props.post._id}`} style={{ textDecoration: 'none' }}>
+          <h1 className="title">{props.post.title}</h1>
+        </Link>
+      </div>
+      <div>
+        <Link to={`/${props.post.user.username}/posts`} style={{ textDecoration: 'none' }}>
+          <p className="author">By {props.post.user.displayName} ({`@${props.post.user.username}`})</p>
+        </Link>
+      </div>
       <p className="date-published">Date Published: {new Date(props.post.datePublished).toLocaleString()}</p>
       {props.post.dateLastEdited && (
         <p className="date-edited">Date Last Edited: {new Date(props.post.dateLastEdited).toLocaleString()}</p>
@@ -25,5 +50,9 @@ function BlogPost(props) {
     </div>
   );
 }
+
+BlogPost.defaultProps = {
+  editable: true
+};
 
 export default BlogPost;

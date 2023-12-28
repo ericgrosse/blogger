@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
+import ReactMarkdown from 'react-markdown';
 import { APIBase } from '../../helpers/APIHelper';
 import './EditBlogPost.scss';
 
@@ -70,26 +71,36 @@ function EditBlogPost() {
 
   return (
     <div className="EditBlogPost">
-      <h2>Edit Blog Post</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-        />
+      <h1>Edit Blog Post</h1>
+      <form onSubmit={handleSubmit} className="form-container">
+        <div className="form-inputs">
+          <label htmlFor="title">Title:</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+          />
 
-        <label htmlFor="content">Content:</label>
-        <textarea
-          id="content"
-          name="content"
-          value={formData.content}
-          onChange={handleChange}
-        />
+          <label htmlFor="content">Content:</label>
+          <textarea
+            id="content"
+            name="content"
+            value={formData.content}
+            onChange={handleChange}
+          />
 
-        <button type="submit">Submit</button>
+          <button type="submit">Submit</button>
+        </div>
+
+        <div className="preview-container">
+          <p className="preview">Preview:</p>
+          <div className="markdown-preview">
+            <h1 className="title">{formData.title}</h1>
+            <ReactMarkdown>{formData.content}</ReactMarkdown>
+          </div>
+        </div>
       </form>
     </div>
   );

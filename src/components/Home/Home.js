@@ -29,7 +29,7 @@ function Home() {
         <div>
           <h1 className="top-posts">Top Posts</h1>
             {topPosts.map((post) => (
-              <BlogPost key={post._id} post={post} />
+              <BlogPost key={post._id} post={post} editable={false} />
             ))}
         </div>
       )}
