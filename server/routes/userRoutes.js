@@ -269,11 +269,109 @@ router.delete('/delete-user', authMiddleware, async (req, res) => {
   }
 });
 
-// Apply authMiddleware to all remaining routes
-router.use('/blog-posts', authMiddleware);
+// Update user's display name
+router.put('/update-display-name', authMiddleware, async (req, res) => {
+  try {
+    const { displayName } = req.body;
+
+    // Check if displayName is empty
+    if (!displayName.trim()) {
+      return res.status(400).json({ error: 'Display name cannot be empty' });
+    }
+
+    // Update the user's display name
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { displayName } },
+      { new: true, select: '-password' } // Return updated user details excluding password
+    );
+
+    res.status(200).json({ message: 'Display name updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update user's email
+router.put('/update-email', authMiddleware, async (req, res) => {
+  try {
+    const { oldEmail, newEmail } = req.body;
+
+    // Find the user by ID to get the current email
+    const user = await User.findById(req.user._id);
+
+    // Check if the provided old email matches the current email
+    if (user.email !== oldEmail) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check if the new email is in a valid format
+    if (!emailRegex.test(newEmail)) {
+      return res.status(400).json({ error: 'Invalid email address format' });
+    }
+
+    // Check if the new email is unique
+    const emailExists = await User.findOne({ email: newEmail });
+    if (emailExists) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    // Update the user's email
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { email: newEmail } },
+      { new: true, select: '-password' } // Return updated user details excluding password
+    );
+
+    res.status(200).json({ message: 'Email updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update user's password
+router.put('/update-password', authMiddleware, async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    // Find the user by ID to get the current password hash
+    const user = await User.findById(req.user._id);
+
+    // Compare the provided old password with the stored hash
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check if the new password meets criteria
+    if (newPassword.length < minPasswordLength || newPassword.length > maxPasswordLength || !passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        error: `Invalid password. Password must be between ${minPasswordLength} and ${maxPasswordLength} characters long and include at least one uppercase letter, one lowercase letter, and one number.`,
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { password: hashedPassword } },
+      { new: true, select: '-password' } // Return updated user details excluding password
+    );
+
+    res.status(200).json({ message: 'Password updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Create a new blog post
-router.post('/blog-posts', async (req, res) => {
+router.post('/blog-posts', authMiddleware, async (req, res) => {
   try {
     const { title, content, viewCount, datePublished, dateLastEdited } = req.body;
 
@@ -313,7 +411,7 @@ router.post('/blog-posts', async (req, res) => {
 });
 
 // Update a blog post
-router.put('/blog-posts/:postId', async (req, res) => {
+router.put('/blog-posts/:postId', authMiddleware, async (req, res) => {
   try {
     const { title, content } = req.body;
     const { postId } = req.params;
@@ -353,7 +451,7 @@ router.put('/blog-posts/:postId', async (req, res) => {
 });
 
 // Delete a blog post
-router.delete('/blog-posts/:postId', async (req, res) => {
+router.delete('/blog-posts/:postId', authMiddleware, async (req, res) => {
   try {
     const { postId } = req.params;
 
