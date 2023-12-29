@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './BlogPost.scss';
 import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal'; // Adjust the path based on your project structure
+import './BlogPost.scss';
 
 function BlogPost(props) {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
   const isCurrentUser = localStorage.getItem('username') === props.post.user.username;
 
@@ -14,7 +16,11 @@ function BlogPost(props) {
   };
 
   const handleDeleteBlogPost = () => {
-    console.log('Todo');
+    setDeleteModalOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModalOpen(false);
   };
 
   return (
@@ -47,6 +53,13 @@ function BlogPost(props) {
         <ReactMarkdown>{props.post.content}</ReactMarkdown>
       </div>
       <p className="view-count"><FontAwesomeIcon icon={faEye} /> {props.post.viewCount}</p>
+      
+      <ConfirmDeleteModal
+        title="Delete Blog Post"
+        post={props.post}
+        isOpen={deleteModalOpen}
+        onClose={handleCancelDelete}
+      />
     </div>
   );
 }
