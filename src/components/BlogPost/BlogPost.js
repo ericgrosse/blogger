@@ -21,15 +21,15 @@ function BlogPost(props) {
     <div className="BlogPost">
       {isCurrentUser && props.editable && (
         <div className="action-buttons">
-          <button className="edit-button">
-            <FontAwesomeIcon icon={faEdit} onClick={handleEditBlogPost} />
+          <button className="edit-button" onClick={handleEditBlogPost}>
+            <FontAwesomeIcon icon={faEdit} />
           </button>
-          <button className="delete-button">
-            <FontAwesomeIcon icon={faTrashCan} onClick={handleDeleteBlogPost} />
+          <button className="delete-button" onClick={handleDeleteBlogPost}>
+            <FontAwesomeIcon icon={faTrashCan} />
           </button>
         </div>
       )}
-      <div>
+      <div className="title-container">
         <Link to={`/${props.post.user.username}/${props.post._id}`} style={{ textDecoration: 'none' }}>
           <h1 className="title">{props.post.title}</h1>
         </Link>
