@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toastr from 'toastr';
-import Modal from '../Modal/Modal';
+import ProfileModal from '../ProfileModal/ProfileModal';
 import { APIBase } from '../../helpers/APIHelper';
 import './Profile.scss';
 
@@ -47,7 +47,7 @@ function Profile() {
         </div>
       )}
 
-      <Modal
+      <ProfileModal
         title="Change Details"
         isOpen={modalOpen}
         onClose={closeModal}

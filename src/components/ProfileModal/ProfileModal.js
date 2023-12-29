@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
-import './Modal.scss';
+import './ProfileModal.scss';
 
-const Modal = ({ title, isOpen, onClose, modalType }) => {
+const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
   const [newDisplayName, setNewDisplayName] = useState('');
   const [oldEmail, setOldEmail] = useState('');
   const [confirmOldEmail, setConfirmOldEmail] = useState('');
@@ -117,4 +117,4 @@ const Modal = ({ title, isOpen, onClose, modalType }) => {
   );
 };
 
-export default Modal;
+export default ProfileModal;
