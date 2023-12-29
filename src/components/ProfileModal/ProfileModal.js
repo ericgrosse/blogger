@@ -101,16 +101,18 @@ const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
-          <h2>{title}</h2>
-          <button onClick={onClose}>&times;</button>
-        </div>
-        <div className="modal-content">{modalContent}</div>
-        <div className="modal-footer">
-          <button onClick={onClose}>Cancel</button>
-          <button onClick={handleSubmit}>Submit</button>
+    <div className="ProfileModal">
+      <div className="modal-overlay">
+        <div className="modal">
+          <div className="modal-header">
+            <h2>{title}</h2>
+            <button className="close-button" onClick={onClose}>&times;</button>
+          </div>
+          <div className="modal-content">{modalContent}</div>
+          <div className="modal-footer">
+            <button onClick={onClose}>Cancel</button>
+            <button onClick={handleSubmit}>Submit</button>
+          </div>
         </div>
       </div>
     </div>

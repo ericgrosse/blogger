@@ -70,7 +70,7 @@ function CreateBlogPost() {
             onChange={handleChange}
           />
 
-          <button type="submit">Submit</button>
+          <button type="submit">Publish</button>
         </div>
 
         <div className="preview-container">
