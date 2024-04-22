@@ -134,26 +134,6 @@ router.post('/logout', (req, res) => {
   }
 });
 
-// Get top 10 blog posts by view count
-router.get('/top-posts', async (req, res) => {
-  try {
-    // Find the top 3 blog posts sorted by view count in descending order
-    const topPosts = await BlogPost.find()
-      .sort({ viewCount: -1 })
-      .limit(3)
-      .populate('userId', 'username displayName')
-      .lean();
-
-    // Destructure user details and create an updated array
-    const updatedTopPosts = topPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
-
-    res.status(200).json({ topPosts: updatedTopPosts });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // Verify if a user is logged in
 router.post('/verify-login', async (req, res) => {
   try {
@@ -180,19 +160,56 @@ router.post('/verify-login', async (req, res) => {
   }
 });
 
-// Get latest blog posts by dateLastPublished
-router.get('/latest-posts', async (req, res) => {
+// Get top x blog posts by view count
+router.get('/top-posts', async (req, res) => {
   try {
-    // Find the latest 10 blog posts sorted by dateLastPublished in descending order
-    const latestPosts = await BlogPost.find()
-      .sort({ dateLastPublished: -1 }) // Sort by dateLastPublished in descending order
+    // Find the top 3 blog posts sorted by view count in descending order
+    const topPosts = await BlogPost.find()
+      .sort({ viewCount: -1 })
+      .limit(3)
       .populate('userId', 'username displayName')
       .lean();
 
     // Destructure user details and create an updated array
+    const updatedTopPosts = topPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
+
+    res.status(200).json({ topPosts: updatedTopPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get latest blog posts by dateLastPublished with pagination
+router.get('/latest-posts', async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10 if not provided
+
+    // Convert page and limit to integers
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    // Calculate the number of items to skip based on page number
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Find the latest blog posts sorted by dateLastPublished in descending order
+    const latestPostsQuery = BlogPost.find()
+      .sort({ dateLastPublished: -1 }) // Sort by dateLastPublished in descending order
+      .populate('userId', 'username displayName');
+
+    // Execute two queries in parallel: one to get paginated data and one to count total
+    const [latestPosts, totalPostsCount] = await Promise.all([
+      latestPostsQuery.skip(skip).limit(limitNumber).lean(),
+      BlogPost.countDocuments(), // Count all documents
+    ]);
+
+    // Destructure user details and create an updated array for paginated posts
     const updatedLatestPosts = latestPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
 
-    res.status(200).json({ latestPosts: updatedLatestPosts });
+    res.status(200).json({
+      latestPosts: updatedLatestPosts,
+      totalPosts: totalPostsCount
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

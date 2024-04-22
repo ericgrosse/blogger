@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toastr from 'toastr';
-import BlogPost from './../BlogPost/BlogPost';
+import BlogPost from '../BlogPost/BlogPost';
+import Pagination from '../Pagination/Pagination';
 import { APIBase } from '../../helpers/APIHelper';
 import './Home.scss';
 
 function Home() {
   const [topPosts, setTopPosts] = useState([]);
   const [latestPosts, setLatestPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const getTopPosts = async () => {
-    try {
-      const response = await axios.get(`${APIBase}/top-posts`);
-      const data = response.data;
-      setTopPosts(data.topPosts);
-    } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error getting top posts: ${error.response.data.error}`);
-      }
-    }
-  };
+  useEffect(() => {
+    // Get the latest posts sorted by dateLastPublished
+    getLatestPosts(currentPage);
+  }, [currentPage]);
 
-  const getLatestPosts = async () => {
+  const getLatestPosts = async (page) => {
     try {
-      const response = await axios.get(`${APIBase}/latest-posts`);
+      const response = await axios.get(`${APIBase}/latest-posts?page=${page}`);
       const data = response.data;
       setLatestPosts(data.latestPosts);
+      setTotalPages(Math.ceil(data.totalPosts / 10)); // Assuming 10 items per page
     } catch (error) {
       if (error.response.status !== 401) {
         toastr.error(`Error getting latest posts: ${error.response.data.error}`);
@@ -33,27 +30,22 @@ function Home() {
     }
   };
 
-  useEffect(() => {
-    // Get top 3 posts when the component mounts
-    getTopPosts();
-    // Also get latest posts sorted by dateLastPublished
-    getLatestPosts();
-  }, []);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    getLatestPosts(pageNumber);
+  };
 
   return (
-    <div className="Home">
-      {topPosts.length > 0 && (
-        <div>
-          <h1 className="top-posts">Top Posts</h1>
-            {topPosts.map((post) => (
-              <BlogPost key={post._id} post={post} editable={false} />
-            ))}
-          <h1 className="latest-posts">Latest Posts</h1>
-            {latestPosts.map((post) => (
-              <BlogPost key={post._id} post={post} editable={false} />
-            ))}
-        </div>
-      )}
+    <div className="Home">            
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+          
+      {latestPosts.map((post) => (
+        <BlogPost key={post._id} post={post} editable={false} />
+      ))}
     </div>
   );
 }
