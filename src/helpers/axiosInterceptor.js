@@ -7,8 +7,10 @@ const handleTokenExpiration = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   
-  // Redirect to homepage
-  // TODO
+  // Redirect to homepage with after a certain amount of time
+  setTimeout(() => {
+    window.location.href = '/';
+  }, 1750);
 
   // Show toastr notification
   toastr.warning('Your session has expired. Please log in again.');

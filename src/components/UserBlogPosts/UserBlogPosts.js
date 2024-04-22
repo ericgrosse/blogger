@@ -13,10 +13,16 @@ function UserBlogPosts() {
   const [selectedPost, setSelectedPost] = useState(null);
   const { username } = useParams();
   const storedUsername = localStorage.getItem('username');
+  const token = localStorage.getItem('token');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUserBlogPosts();
+  }, []);
 
   const getUserBlogPosts = async () => {
     try {
+      await axios.post(`${APIBase}/verify-login`, { token }); // handles session timeouts
       const response = await axios.get(`${APIBase}/${username}/blog-posts`);
       setUserPosts(response.data.blogPosts);
     } catch (error) {
@@ -56,10 +62,6 @@ function UserBlogPosts() {
     setSelectedPost(postId);
     setDeleteModalOpen(true);
   };
-
-  useEffect(() => {
-    getUserBlogPosts();
-  }, []);
 
   return (
     <div className="UserBlogPosts">

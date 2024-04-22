@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
     await newUser.save();
 
     // Generate JWT token
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '14d' });
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -99,7 +99,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '14d' });
 
     res.status(200).json({
       message: 'Login successful',
@@ -148,6 +148,32 @@ router.get('/top-posts', async (req, res) => {
     const updatedTopPosts = topPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
 
     res.status(200).json({ topPosts: updatedTopPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Verify if a user is logged in
+router.post('/verify-login', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Check if token is provided
+    if (!token) {
+      return res.status(401).json({ error: 'Token not provided' });
+    }
+
+    // Verify the provided token
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        // Token verification failed, user is not logged in
+        return res.status(401).json({ error: 'User not logged in' });
+      }
+
+      // Token is valid, user is logged in
+      res.status(200).json({ message: 'User is logged in', userId: decoded.userId });
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

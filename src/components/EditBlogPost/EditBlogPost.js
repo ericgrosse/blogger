@@ -12,12 +12,18 @@ function EditBlogPost() {
     content: '',
   });
   const [blogPost, setBlogPost] = useState([]);
-  
   const { username, postId } = useParams();
+  const token = localStorage.getItem('token');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Get the blog post when the component mounts
+    getBlogPost();
+  }, []);
 
   const getBlogPost = async () => {
     try {
+      await axios.post(`${APIBase}/verify-login`, { token }); // handles session timeouts
       const response = await axios.get(`${APIBase}/${username}/blog-posts/${postId}`);
       const data = response.data;
       setBlogPost(data.blogPost);
@@ -65,11 +71,6 @@ function EditBlogPost() {
       console.error(`Error updating blog post: ${error.response.data.error}`);
     }
   };
-
-  useEffect(() => {
-    // Get the blog post when the component mounts
-    getBlogPost();
-  }, []);
 
   return (
     <div className="EditBlogPost">

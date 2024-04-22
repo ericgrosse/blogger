@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
@@ -12,7 +12,24 @@ function CreateBlogPost() {
     content: '',
   });
 
+  useEffect(() => {
+    // Verify login in order to handle session expirations
+    verifyLogin();
+  }, []);
+
   const navigate = useNavigate();
+
+  const verifyLogin = async () => {
+    // Get the token from localStorage
+    const token = localStorage.getItem('token');
+
+    await axios.post(`${APIBase}/verify-login`, { token })
+    .catch((error) => {
+      if (error.response.status !== 401) {
+        console.error(error.response.data.error);
+      }
+    });
+  };
 
   const handleChange = (e) => {
     setFormData({

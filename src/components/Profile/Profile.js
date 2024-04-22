@@ -9,10 +9,16 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
+  const username = localStorage.getItem('username');
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
 
   const getUserDetails = async () => {
-    const username = localStorage.getItem('username');
     try {
+      await axios.post(`${APIBase}/verify-login`, { token }); // handles session timeouts
       const response = await axios.get(`${APIBase}/${username}`);
       setUser(response.data.user);
     } catch (error) {
@@ -21,10 +27,6 @@ function Profile() {
       }
     }
   };
-
-  useEffect(() => {
-    getUserDetails();
-  }, []);
 
   const openModal = (type) => {
     setModalType(type);
