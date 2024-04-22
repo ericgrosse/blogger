@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import axios from './helpers/axiosInterceptor'; // Import the axios interceptor to handle session timeouts
 import toastr from 'toastr';
 import reportWebVitals from './reportWebVitals';
 
