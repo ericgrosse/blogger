@@ -137,10 +137,10 @@ router.post('/logout', (req, res) => {
 // Get top 10 blog posts by view count
 router.get('/top-posts', async (req, res) => {
   try {
-    // Find the top 10 blog posts sorted by view count in descending order
+    // Find the top 3 blog posts sorted by view count in descending order
     const topPosts = await BlogPost.find()
       .sort({ viewCount: -1 })
-      .limit(10)
+      .limit(3)
       .populate('userId', 'username displayName')
       .lean();
 
@@ -148,6 +148,25 @@ router.get('/top-posts', async (req, res) => {
     const updatedTopPosts = topPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
 
     res.status(200).json({ topPosts: updatedTopPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get latest blog posts by dateLastPublished
+router.get('/latest-posts', async (req, res) => {
+  try {
+    // Find the latest 10 blog posts sorted by dateLastPublished in descending order
+    const latestPosts = await BlogPost.find()
+      .sort({ dateLastPublished: -1 }) // Sort by dateLastPublished in descending order
+      .populate('userId', 'username displayName')
+      .lean();
+
+    // Destructure user details and create an updated array
+    const updatedLatestPosts = latestPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
+
+    res.status(200).json({ latestPosts: updatedLatestPosts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

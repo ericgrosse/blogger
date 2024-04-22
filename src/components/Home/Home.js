@@ -7,6 +7,7 @@ import './Home.scss';
 
 function Home() {
   const [topPosts, setTopPosts] = useState([]);
+  const [latestPosts, setLatestPosts] = useState([]);
 
   const getTopPosts = async () => {
     try {
@@ -18,9 +19,21 @@ function Home() {
     }
   };
 
+  const getLatestPosts = async () => {
+    try {
+      const response = await axios.get(`${APIBase}/latest-posts`);
+      const data = response.data;
+      setLatestPosts(data.latestPosts);
+    } catch (error) {
+      toastr.error(`Error getting latest posts: ${error.response.data.error}`);
+    }
+  };
+
   useEffect(() => {
-    // Get top 10 posts when the component mounts
+    // Get top 3 posts when the component mounts
     getTopPosts();
+    // Also get latest posts sorted by dateLastPublished
+    getLatestPosts();
   }, []);
 
   return (
@@ -29,6 +42,10 @@ function Home() {
         <div>
           <h1 className="top-posts">Top Posts</h1>
             {topPosts.map((post) => (
+              <BlogPost key={post._id} post={post} editable={false} />
+            ))}
+          <h1 className="latest-posts">Latest Posts</h1>
+            {latestPosts.map((post) => (
               <BlogPost key={post._id} post={post} editable={false} />
             ))}
         </div>
