@@ -8,23 +8,23 @@ import { APIBase } from '../../helpers/APIHelper';
 import './Home.scss';
 
 function Home() {
-  const [latestPosts, setLatestPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState('views'); // Default sort by Views
   const [sortOrder, setSortOrder] = useState('desc'); // Default sort order descending
 
   useEffect(() => {
-    getLatestPosts(currentPage, sortBy, sortOrder);
+    getPosts(currentPage, sortBy, sortOrder);
   }, [currentPage, sortBy, sortOrder]);
 
-  const getLatestPosts = async (page, sortBy, sortOrder) => {
+  const getPosts = async (page, sortBy, sortOrder) => {
     try {
-      const response = await axios.get(`${APIBase}/latest-posts`, {
+      const response = await axios.get(`${APIBase}/get-posts`, {
         params: { page, sortBy, sortOrder },
       });
       const data = response.data;
-      setLatestPosts(data.latestPosts);
+      setPosts(data.posts);
       setTotalPages(Math.ceil(data.totalPosts / 10)); // Assuming 10 items per page
     } catch (error) {
       if (error.response && error.response.status !== 401) {
@@ -54,7 +54,7 @@ function Home() {
         onOrderChange={handleOrderChange}
       />
 
-      {latestPosts.length > 0 && (
+      {posts.length > 0 && (
         <div>
           <Pagination
             currentPage={currentPage}
@@ -62,14 +62,14 @@ function Home() {
             onPageChange={handlePageChange}
           />
           
-          {latestPosts.map((post) => (
+          {posts.map((post) => (
             <BlogPost key={post._id} post={post} editable={false} />
           ))}
         </div>
       )}
 
-      {latestPosts.length === 0 && (
-        <div>No latest posts available.</div>
+      {posts.length === 0 && (
+        <div className="no-latest-posts">No latest posts available.</div>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 # Features to Add
 
+- Proper backward navigation (some redirects are awkward)
 - Loading icon when API requests are in progress
 - Results per page dropdown
 - Regular and advanced search feature

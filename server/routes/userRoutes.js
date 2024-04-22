@@ -160,10 +160,10 @@ router.post('/verify-login', async (req, res) => {
   }
 });
 
-// Get latest blog posts by dateLastPublished with pagination
-router.get('/latest-posts', async (req, res) => {
+// Get blog posts with sorting and pagination
+router.get('/get-posts', async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10 if not provided
+    const { page = 1, limit = 10, sortBy = 'views', sortOrder = 'desc' } = req.query;
 
     // Convert page and limit to integers
     const pageNumber = parseInt(page, 10);
@@ -172,23 +172,37 @@ router.get('/latest-posts', async (req, res) => {
     // Calculate the number of items to skip based on page number
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Find the latest blog posts sorted by dateLastPublished in descending order
-    const latestPostsQuery = BlogPost.find()
-      .sort({ dateLastPublished: -1 }) // Sort by dateLastPublished in descending order
+    // Map frontend sortBy options to backend field names
+    const sortByField = {
+      views: 'viewCount',
+      datePublished: 'datePublished',
+      dateEdited: 'dateEdited',
+      title: 'title',
+    };
+
+    // Create the sort object based on the sortBy and sortOrder parameters
+    const sortObject = {};
+    sortObject[sortByField[sortBy]] = sortOrder === 'desc' ? -1 : 1;
+
+    // Find the blog posts based on sorting and pagination
+    const postsQuery = BlogPost.find()
+      .sort(sortObject)
+      .skip(skip)
+      .limit(limitNumber)
       .populate('userId', 'username displayName');
 
     // Execute two queries in parallel: one to get paginated data and one to count total
-    const [latestPosts, totalPostsCount] = await Promise.all([
-      latestPostsQuery.skip(skip).limit(limitNumber).lean(),
-      BlogPost.countDocuments(), // Count all documents
+    const [posts, totalPostsCount] = await Promise.all([
+      postsQuery.lean(),
+      BlogPost.countDocuments(),
     ]);
 
     // Destructure user details and create an updated array for paginated posts
-    const updatedLatestPosts = latestPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
+    const updatedPosts = posts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
 
     res.status(200).json({
-      latestPosts: updatedLatestPosts,
-      totalPosts: totalPostsCount
+      posts: updatedPosts,
+      totalPosts: totalPostsCount,
     });
   } catch (error) {
     console.error(error);
