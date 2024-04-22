@@ -72,10 +72,14 @@ function EditBlogPost() {
     }
   };
 
+  const handleCancelSubmit = () => {
+    navigate(`/${username}/${postId}`);
+  };
+
   return (
     <div className="EditBlogPost">
       <h1>Edit Blog Post</h1>
-      <form onSubmit={handleSubmit} className="form-container">
+      <div className="form-container">
         <div className="form-inputs">
           <label htmlFor="title">Title:</label>
           <input
@@ -94,7 +98,8 @@ function EditBlogPost() {
             onChange={handleChange}
           />
 
-          <button type="submit">Submit</button>
+          <button onClick={handleSubmit}>Submit</button>
+          <button onClick={handleCancelSubmit}>Cancel</button>
         </div>
 
         <div className="preview-container">
@@ -104,7 +109,7 @@ function EditBlogPost() {
             <ReactMarkdown>{formData.content}</ReactMarkdown>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
