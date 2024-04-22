@@ -67,10 +67,14 @@ function CreateBlogPost() {
     }
   };
 
+  const handleCancelSubmit = () => {
+    navigate('/');
+  };
+
   return (
     <div className="CreateBlogPost">
       <h1>Create Blog Post</h1>
-      <form onSubmit={handleSubmit} className="form-container">
+      <div className="form-container">
         <div className="form-inputs">
           <label htmlFor="title">Title:</label>
           <input
@@ -89,7 +93,8 @@ function CreateBlogPost() {
             onChange={handleChange}
           />
 
-          <button type="submit">Publish</button>
+          <button onClick={handleSubmit}>Publish</button>
+          <button onClick={handleCancelSubmit}>Cancel</button>
         </div>
 
         <div className="preview-container">
@@ -99,7 +104,7 @@ function CreateBlogPost() {
             <ReactMarkdown>{formData.content}</ReactMarkdown>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
