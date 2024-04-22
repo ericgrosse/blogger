@@ -4,10 +4,13 @@ import axios from 'axios';
 import toastr from 'toastr';
 import BlogPost from './../BlogPost/BlogPost';
 import { APIBase } from '../../helpers/APIHelper';
+import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import './UserBlogPosts.scss';
 
 function UserBlogPosts() {
   const [userPosts, setUserPosts] = useState([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
   const { username } = useParams();
   const storedUsername = localStorage.getItem('username');
   const navigate = useNavigate();
@@ -15,11 +18,39 @@ function UserBlogPosts() {
   const getUserBlogPosts = async () => {
     try {
       const response = await axios.get(`${APIBase}/${username}/blog-posts`);
-      const data = response.data;
-      setUserPosts(data.blogPosts);
+      setUserPosts(response.data.blogPosts);
     } catch (error) {
       toastr.error(`Error getting top posts: ${error.response.data.error}`);
     }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {
+        Authorization: token,
+        'Content-Type': 'application/json',
+      };
+
+      await axios.delete(`${APIBase}/blog-posts/${postId}`, { headers });
+      toastr.success('Blog post successfully deleted');
+      setDeleteModalOpen(false);
+      setSelectedPost(null);
+      // Get user blog posts again after deletion
+      getUserBlogPosts();
+    } catch (error) {
+      toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const handleOpenDeleteModal = (postId) => {
+    setSelectedPost(postId);
+    setDeleteModalOpen(true);
   };
 
   useEffect(() => {
@@ -43,7 +74,16 @@ function UserBlogPosts() {
         <div>
           <h1 className="posts-by-user">Posts by {userPosts[0].user.displayName} (@{userPosts[0].user.username})</h1>
             {userPosts.map((post) => (
-              <BlogPost key={post._id} post={post} />
+              <React.Fragment key={post._id}>
+                <BlogPost post={post} onDelete={handleOpenDeleteModal} />
+                <ConfirmDeleteModal
+                  title="Delete Blog Post"
+                  post={post}
+                  isOpen={deleteModalOpen && selectedPost === post._id}
+                  onClose={handleCancelDelete}
+                  onDelete={handleDeletePost}
+                />
+            </React.Fragment>
             ))}
         </div>
       )}

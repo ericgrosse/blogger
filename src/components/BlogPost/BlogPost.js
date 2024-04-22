@@ -3,10 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrashCan } from '@fortawesome/free-regular-svg-icons';
-import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal'; // Adjust the path based on your project structure
 import './BlogPost.scss';
 
-function BlogPost({ post, editable }) {
+function BlogPost({ post, editable, onDelete }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
   const isCurrentUser = localStorage.getItem('username') === post.user.username;
@@ -16,7 +15,7 @@ function BlogPost({ post, editable }) {
   };
 
   const handleDeleteBlogPost = () => {
-    setDeleteModalOpen(true);
+    onDelete(post._id);
   };
 
   const handleCancelDelete = () => {
@@ -53,13 +52,6 @@ function BlogPost({ post, editable }) {
         <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
       <p className="view-count"><FontAwesomeIcon icon={faEye} /> {post.viewCount}</p>
-      
-      <ConfirmDeleteModal
-        title="Delete Blog Post"
-        post={post}
-        isOpen={deleteModalOpen}
-        onClose={handleCancelDelete}
-      />
     </div>
   );
 }

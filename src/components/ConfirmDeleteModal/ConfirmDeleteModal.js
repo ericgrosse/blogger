@@ -5,27 +5,12 @@ import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
 import './ConfirmDeleteModal.scss';
 
-const ConfirmDeleteModal = ({ title, post, isOpen, onClose }) => {
+const ConfirmDeleteModal = ({ title, post, isOpen, onClose, onDelete }) => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
-      // Get the token from localStorage
-      const token = localStorage.getItem('token');
-
-      // Set the Authorization header
-      const headers = {
-        Authorization: token,
-        'Content-Type': 'application/json',
-      };
-
-      await axios.delete(`${APIBase}/blog-posts/${post._id}`, { headers });
-      toastr.success('Blog post successfully deleted');
-      onClose();
-      
-      // Navigate to UserBlogPosts component
-      navigate(`/${post.user.username}/posts`);
-
+      onDelete(post._id);
     } catch (error) {
       toastr.error(`Error deleting blog post: ${error.response.data.error}`);
     }

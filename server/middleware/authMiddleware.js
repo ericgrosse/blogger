@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Adjust the path based on your user model
+const User = require('../models/User');
 
 const authMiddleware = async (req, res, next) => {
   // Check if the request includes an authorization header with a valid token
