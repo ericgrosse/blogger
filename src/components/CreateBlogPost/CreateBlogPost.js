@@ -44,7 +44,9 @@ function CreateBlogPost() {
       navigate(`/${username}/${_id}`);
 
     } catch (error) {
-      toastr.error(`Error creating blog post: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error creating blog post: ${error.response.data.error}`);
+      }
     }
   };
 

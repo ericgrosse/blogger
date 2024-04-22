@@ -12,7 +12,9 @@ const ConfirmDeleteModal = ({ title, post, isOpen, onClose, onDelete }) => {
     try {
       onDelete(post._id);
     } catch (error) {
-      toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      }
     }
   };
   

@@ -15,7 +15,9 @@ function Home() {
       const data = response.data;
       setTopPosts(data.topPosts);
     } catch (error) {
-      toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      }
     }
   };
 
@@ -25,7 +27,9 @@ function Home() {
       const data = response.data;
       setLatestPosts(data.latestPosts);
     } catch (error) {
-      toastr.error(`Error getting latest posts: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error getting latest posts: ${error.response.data.error}`);
+      }
     }
   };
 

@@ -26,7 +26,9 @@ function EditBlogPost() {
         content: data.blogPost.content,
       });
     } catch (error) {
-      toastr.error(`Error getting blog post: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error getting blog post: ${error.response.data.error}`);
+      }
     }
   };
 

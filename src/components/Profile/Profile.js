@@ -16,7 +16,9 @@ function Profile() {
       const response = await axios.get(`${APIBase}/${username}`);
       setUser(response.data.user);
     } catch (error) {
-      toastr.error(`Error getting user details: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error getting user details: ${error.response.data.error}`);
+      }
     }
   };
 

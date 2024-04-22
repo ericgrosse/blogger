@@ -20,7 +20,9 @@ function ViewBlogPost() {
       const data = response.data;
       setBlogPost(data.blogPost);
     } catch (error) {
-      toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      }
     }
   };
 
@@ -41,7 +43,9 @@ function ViewBlogPost() {
       navigate(`/${blogPost.user.username}/posts`);
 
     } catch (error) {
-      toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      }
     }
   };
 

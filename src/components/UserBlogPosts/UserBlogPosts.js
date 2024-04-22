@@ -20,7 +20,9 @@ function UserBlogPosts() {
       const response = await axios.get(`${APIBase}/${username}/blog-posts`);
       setUserPosts(response.data.blogPosts);
     } catch (error) {
-      toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      }
     }
   };
 
@@ -39,7 +41,9 @@ function UserBlogPosts() {
       // Get user blog posts again after deletion
       getUserBlogPosts();
     } catch (error) {
-      toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      }
     }
   };
 

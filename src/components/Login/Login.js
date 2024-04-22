@@ -31,7 +31,9 @@ function Login() {
       toastr.success('Logged in successfully');
       navigate('/');
     } catch (error) {
-      toastr.error(`Error during registration: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        toastr.error(`Error during registration: ${error.response.data.error}`);
+      }
     }
   };
 

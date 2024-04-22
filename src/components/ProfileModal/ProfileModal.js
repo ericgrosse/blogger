@@ -55,13 +55,15 @@ const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
       onClose();
 
     } catch (error) {
-      // Handle errors based on the type of request
-      if (modalType === 'displayName') {
-        toastr.error(`Error updating display name: ${error.response.data.error}`);
-      } else if (modalType === 'email') {
-        toastr.error(`Error updating email: ${error.response.data.error}`);
-      } else if (modalType === 'password') {
-        toastr.error(`Error updating password: ${error.response.data.error}`);
+      if (error.response.status !== 401) {
+        // Handle errors based on the type of request
+        if (modalType === 'displayName') {
+          toastr.error(`Error updating display name: ${error.response.data.error}`);
+        } else if (modalType === 'email') {
+          toastr.error(`Error updating email: ${error.response.data.error}`);
+        } else if (modalType === 'password') {
+          toastr.error(`Error updating password: ${error.response.data.error}`);
+        }
       }
     }
   };
