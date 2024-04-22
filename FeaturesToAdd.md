@@ -1,5 +1,6 @@
 # Features to Add
 
+- Loading icon when API requests are in progress
 - Results per page dropdown
 - Regular and advanced search feature
 - Fix confirm delete modal behavior (currently pressing the delete button bypasses the modal altogether and deletes the post immediately)

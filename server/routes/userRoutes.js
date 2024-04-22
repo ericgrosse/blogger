@@ -160,26 +160,6 @@ router.post('/verify-login', async (req, res) => {
   }
 });
 
-// Get top x blog posts by view count
-router.get('/top-posts', async (req, res) => {
-  try {
-    // Find the top 3 blog posts sorted by view count in descending order
-    const topPosts = await BlogPost.find()
-      .sort({ viewCount: -1 })
-      .limit(3)
-      .populate('userId', 'username displayName')
-      .lean();
-
-    // Destructure user details and create an updated array
-    const updatedTopPosts = topPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
-
-    res.status(200).json({ topPosts: updatedTopPosts });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // Get latest blog posts by dateLastPublished with pagination
 router.get('/latest-posts', async (req, res) => {
   try {

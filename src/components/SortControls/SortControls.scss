@@ -1,0 +1,25 @@
+.SortControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+
+  label {
+    margin-right: 8px;
+    color: black;
+  }
+
+  select {
+    padding: 5px;
+    margin-right: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: black;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
