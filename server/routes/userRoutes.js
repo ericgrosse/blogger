@@ -429,7 +429,7 @@ router.put('/update-password', authMiddleware, async (req, res) => {
 // Create a new blog post
 router.post('/blog-posts', authMiddleware, async (req, res) => {
   try {
-    const { title, content, viewCount, datePublished, dateLastEdited } = req.body;
+    const { title, content, viewCount } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: 'Missing required field: title' });
@@ -445,8 +445,8 @@ router.post('/blog-posts', authMiddleware, async (req, res) => {
       title,
       content,
       viewCount,
-      datePublished,
-      dateLastEdited
+      datePublished: Date.now(),
+      dateLastEdited: Date.now()
     });
 
     // Save the blog post to the database
