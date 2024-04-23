@@ -176,7 +176,7 @@ router.get('/get-posts', async (req, res) => {
     const sortByField = {
       views: 'viewCount',
       datePublished: 'datePublished',
-      dateEdited: 'dateEdited',
+      dateLastEdited: 'dateLastEdited',
       title: 'title',
     };
 

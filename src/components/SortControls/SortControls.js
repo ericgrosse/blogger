@@ -8,7 +8,7 @@ function SortControls({ sortBy, sortOrder, onSortChange, onOrderChange }) {
       <select id="sortBy" value={sortBy} onChange={onSortChange}>
         <option value="views">Views</option>
         <option value="datePublished">Date Published</option>
-        <option value="dateEdited">Date Edited</option>
+        <option value="dateLastEdited">Date Last Edited</option>
         <option value="title">Title</option>
       </select>
       <label htmlFor="sortOrder">Order:</label>
