@@ -7,4 +7,9 @@ Blogger is a blogging platform built using the MERN stack. To run the app:
 - In a separate terminal, run `npm start`  (frontend)
 
 ## Features
-- TODO: Add list of currently implemented features
+- Create, read, update and delete blog posts
+- View all posts from a specific user
+- Register, login, logout, edit profile username, email and password
+- Sort posts by title, viewcount, date published and date last edited, in ascending or descending order
+- Pagination for blog posts listed on the homepage
+- Session handling using JSON web tokens
