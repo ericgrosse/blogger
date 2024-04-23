@@ -359,7 +359,7 @@ router.put('/update-email', authMiddleware, async (req, res) => {
 
     // Check if the provided old email matches the current email
     if (user.email !== oldEmail) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(400).json({ error: 'Invalid credentials' });
     }
 
     // Check if the new email is in a valid format
@@ -399,7 +399,7 @@ router.put('/update-password', authMiddleware, async (req, res) => {
     const passwordMatch = await bcrypt.compare(oldPassword, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(400).json({ error: 'Invalid credentials' });
     }
 
     // Check if the new password meets criteria
