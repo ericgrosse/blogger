@@ -20,6 +20,11 @@ button:hover {
   background-color: #43B86E;
 }
 
+button:disabled {
+  background-color: #3DA463B8;
+  cursor: not-allowed;
+}
+
 .toast-success {
   background-color: #3DA463;
 }

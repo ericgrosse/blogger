@@ -11,6 +11,8 @@ function EditBlogPost() {
     title: '',
     content: '',
   });
+  const [originalTitle, setOriginalTitle] = useState('');
+  const [originalContent, setOriginalContent] = useState('');
   const [blogPost, setBlogPost] = useState([]);
   const { username, postId } = useParams();
   const token = localStorage.getItem('token');
@@ -31,6 +33,8 @@ function EditBlogPost() {
         title: data.blogPost.title,
         content: data.blogPost.content,
       });
+      setOriginalTitle(data.blogPost.title);
+      setOriginalContent(data.blogPost.content);
     } catch (error) {
       if (error.response.status !== 401) {
         toastr.error(`Error getting blog post: ${error.response.data.error}`);
@@ -76,6 +80,10 @@ function EditBlogPost() {
     navigate(`/${username}/${postId}`);
   };
 
+  const isSubmitDisabled = 
+    (originalTitle === formData.title) &&
+    (originalContent === formData.content);
+
   return (
     <div className="EditBlogPost">
       <h1>Edit Blog Post</h1>
@@ -98,8 +106,8 @@ function EditBlogPost() {
             onChange={handleChange}
           />
 
-          <button onClick={handleSubmit}>Submit</button>
           <button onClick={handleCancelSubmit}>Cancel</button>
+          <button onClick={handleSubmit} disabled={isSubmitDisabled}>Submit</button>
         </div>
 
         <div className="preview-container">

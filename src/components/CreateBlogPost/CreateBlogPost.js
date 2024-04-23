@@ -71,6 +71,8 @@ function CreateBlogPost() {
     navigate('/');
   };
 
+  const isSubmitDisabled = !formData.title || !formData.content;
+
   return (
     <div className="CreateBlogPost">
       <h1>Create Blog Post</h1>
@@ -93,8 +95,8 @@ function CreateBlogPost() {
             onChange={handleChange}
           />
 
-          <button onClick={handleSubmit}>Publish</button>
           <button onClick={handleCancelSubmit}>Cancel</button>
+          <button onClick={handleSubmit} disabled={isSubmitDisabled}>Publish</button>
         </div>
 
         <div className="preview-container">

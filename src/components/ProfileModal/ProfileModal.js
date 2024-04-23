@@ -70,6 +70,11 @@ const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
 
   if (!isOpen) return null;
 
+  const isSubmitDisabled =
+    (modalType === 'displayName' && !newDisplayName) ||
+    (modalType === 'email' && (!oldEmail || !confirmOldEmail || !newEmail)) ||
+    (modalType === 'password' && (!oldPassword || !confirmOldPassword || !newPassword));
+
   let modalContent;
   if (modalType === 'displayName') {
     modalContent = (
@@ -113,7 +118,7 @@ const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
           <div className="modal-content">{modalContent}</div>
           <div className="modal-footer">
             <button onClick={onClose}>Cancel</button>
-            <button onClick={handleSubmit}>Submit</button>
+            <button onClick={handleSubmit} disabled={isSubmitDisabled}>Submit</button>
           </div>
         </div>
       </div>
