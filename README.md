@@ -8,6 +8,7 @@ Blogger is a blogging platform built using the MERN stack. To run the app:
 
 ## Features
 - Create, read, update and delete blog posts
+- Embed YouTube links
 - View all posts from a specific user
 - Register, login, logout, edit profile username, email and password
 - Sort posts by title, viewcount, date published and date last edited, in ascending or descending order

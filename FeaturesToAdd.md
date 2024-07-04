@@ -8,7 +8,7 @@
 - Post likes feature
 - Share feature
 - Embedded images
-- Embedded video
+- ~~Embedded video~~
 - More robust pagination (Add ... button, go to first and last page buttons)
 - Basic language filtering - prevent a post from being published or edited if it contains profanity for example
 - Setup registration to actually send out an email
