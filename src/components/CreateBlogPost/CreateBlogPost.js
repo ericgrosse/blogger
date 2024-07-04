@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { APIBase } from '../../helpers/APIHelper';
 import './CreateBlogPost.scss';
 
@@ -73,6 +74,13 @@ function CreateBlogPost() {
 
   const isSubmitDisabled = !formData.title || !formData.content;
 
+  const parseYoutubeLinks = (content) => {
+    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/g;
+    return content.replace(youtubeRegex, (match, p1) => {
+      return `<iframe width="600" height="400" src="https://www.youtube.com/embed/${p1}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    });
+  };
+
   return (
     <div className="CreateBlogPost">
       <h1>Create Blog Post</h1>
@@ -103,7 +111,10 @@ function CreateBlogPost() {
           <p className="preview">Preview:</p>
           <div className="markdown-preview">
             <h1 className="title">{formData.title}</h1>
-            <ReactMarkdown>{formData.content}</ReactMarkdown>
+            <ReactMarkdown
+              rehypePlugins={[rehypeRaw]}
+              children={parseYoutubeLinks(formData.content)}
+            />
           </div>
         </div>
       </div>
