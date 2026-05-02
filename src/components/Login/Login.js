@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './Login.scss';
 
 function Login() {
@@ -31,8 +32,8 @@ function Login() {
       toastr.success('Logged in successfully');
       navigate('/');
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error during registration: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error during login: ${getApiErrorMessage(error, 'Unable to log in')}`);
       }
     }
   };

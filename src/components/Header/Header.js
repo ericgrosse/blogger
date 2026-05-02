@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faSignOutAlt, faList, faPen, faNewspaper } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faSignOutAlt, faList, faPen } from '@fortawesome/free-solid-svg-icons';
 import toastr from 'toastr';
 import './Header.scss';
 

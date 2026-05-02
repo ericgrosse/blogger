@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
 import BlogPost from '../BlogPost/BlogPost';
 import { APIBase } from '../../helpers/APIHelper';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './ViewBlogPost.scss';
 
 function ViewBlogPost() {
@@ -14,17 +15,17 @@ function ViewBlogPost() {
   const { username, postId } = useParams();
   const navigate = useNavigate();
 
-  const getBlogPost = async () => {
+  const getBlogPost = useCallback(async () => {
     try {
       const response = await axios.get(`${APIBase}/${username}/blog-posts/${postId}`);
       const data = response.data;
       setBlogPost(data.blogPost);
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error getting blog post: ${getApiErrorMessage(error, 'Unable to load blog post')}`);
       }
     }
-  };
+  }, [postId, username]);
 
   const handleDeletePost = async (postId) => {
     try {
@@ -43,8 +44,8 @@ function ViewBlogPost() {
       navigate(`/${blogPost.user.username}/posts`);
 
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error deleting blog post: ${getApiErrorMessage(error, 'Unable to delete blog post')}`);
       }
     }
   };
@@ -62,13 +63,13 @@ function ViewBlogPost() {
   useEffect(() => {
     // Get the blog post when the component mounts
     getBlogPost();
-  }, []);
+  }, [getBlogPost]);
 
   return (
     <div className="ViewBlogPost">
       {blogPost && blogPost.user && (
         <>
-          <BlogPost post={blogPost} onDelete={handleDeletePost} />
+          <BlogPost post={blogPost} onDelete={handleOpenDeleteModal} />
 
           <ConfirmDeleteModal
             title="Delete Blog Post"

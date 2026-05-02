@@ -5,6 +5,7 @@ import BlogPost from '../BlogPost/BlogPost';
 import Pagination from '../Pagination/Pagination';
 import SortControls from '../SortControls/SortControls';
 import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './Home.scss';
 
 function Home() {
@@ -27,8 +28,8 @@ function Home() {
       setPosts(data.posts);
       setTotalPages(Math.ceil(data.totalPosts / 10)); // Assuming 10 items per page
     } catch (error) {
-      if (error.response && error.response.status !== 401) {
-        toastr.error(`Error getting latest posts: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error getting latest posts: ${getApiErrorMessage(error, 'Unable to load posts')}`);
       }
     }
   };

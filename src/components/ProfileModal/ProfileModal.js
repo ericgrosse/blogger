@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './ProfileModal.scss';
 
 const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
@@ -55,14 +56,16 @@ const ProfileModal = ({ title, isOpen, onClose, modalType }) => {
       onClose();
 
     } catch (error) {
-      if (error.response.status !== 401) {
+      if (!isUnauthorizedError(error)) {
+        const message = getApiErrorMessage(error, 'Unable to update profile');
+
         // Handle errors based on the type of request
         if (modalType === 'displayName') {
-          toastr.error(`Error updating display name: ${error.response.data.error}`);
+          toastr.error(`Error updating display name: ${message}`);
         } else if (modalType === 'email') {
-          toastr.error(`Error updating email: ${error.response.data.error}`);
+          toastr.error(`Error updating email: ${message}`);
         } else if (modalType === 'password') {
-          toastr.error(`Error updating password: ${error.response.data.error}`);
+          toastr.error(`Error updating password: ${message}`);
         }
       }
     }

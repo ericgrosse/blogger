@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import toastr from 'toastr';
 import ProfileModal from '../ProfileModal/ProfileModal';
 import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './Profile.scss';
 
 function Profile() {
@@ -12,21 +13,21 @@ function Profile() {
   const username = localStorage.getItem('username');
   const token = localStorage.getItem('token');
 
-  useEffect(() => {
-    getUserDetails();
-  }, []);
-
-  const getUserDetails = async () => {
+  const getUserDetails = useCallback(async () => {
     try {
       await axios.post(`${APIBase}/verify-login`, { token }); // handles session timeouts
       const response = await axios.get(`${APIBase}/${username}`);
       setUser(response.data.user);
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error getting user details: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error getting user details: ${getApiErrorMessage(error, 'Unable to load user details')}`);
       }
     }
-  };
+  }, [token, username]);
+
+  useEffect(() => {
+    getUserDetails();
+  }, [getUserDetails]);
 
   const openModal = (type) => {
     setModalType(type);

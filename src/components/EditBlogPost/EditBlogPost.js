@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
 import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
+import MarkdownContent from '../MarkdownContent/MarkdownContent';
+import '../MarkdownContent/MarkdownContent.scss';
 import './EditBlogPost.scss';
 
 function EditBlogPost() {
@@ -14,22 +15,15 @@ function EditBlogPost() {
   });
   const [originalTitle, setOriginalTitle] = useState('');
   const [originalContent, setOriginalContent] = useState('');
-  const [blogPost, setBlogPost] = useState([]);
   const { username, postId } = useParams();
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Get the blog post when the component mounts
-    getBlogPost();
-  }, []);
-
-  const getBlogPost = async () => {
+  const getBlogPost = useCallback(async () => {
     try {
       await axios.post(`${APIBase}/verify-login`, { token }); // handles session timeouts
       const response = await axios.get(`${APIBase}/${username}/blog-posts/${postId}`);
       const data = response.data;
-      setBlogPost(data.blogPost);
       setFormData({
         title: data.blogPost.title,
         content: data.blogPost.content,
@@ -37,11 +31,16 @@ function EditBlogPost() {
       setOriginalTitle(data.blogPost.title);
       setOriginalContent(data.blogPost.content);
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error getting blog post: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error getting blog post: ${getApiErrorMessage(error, 'Unable to load blog post')}`);
       }
     }
-  };
+  }, [postId, token, username]);
+
+  useEffect(() => {
+    // Get the blog post when the component mounts
+    getBlogPost();
+  }, [getBlogPost]);
 
   const handleChange = (e) => {
     setFormData({
@@ -73,7 +72,9 @@ function EditBlogPost() {
       navigate(`/${username}/${_id}`);
 
     } catch (error) {
-      console.error(`Error updating blog post: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error updating blog post: ${getApiErrorMessage(error, 'Unable to update blog post')}`);
+      }
     }
   };
 
@@ -84,13 +85,6 @@ function EditBlogPost() {
   const isSubmitDisabled = 
     (originalTitle === formData.title) &&
     (originalContent === formData.content);
-
-  const parseYoutubeLinks = (content) => {
-    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/g;
-    return content.replace(youtubeRegex, (match, p1) => {
-      return `<iframe width="600" height="400" src="https://www.youtube.com/embed/${p1}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    });
-  };
 
   return (
     <div className="EditBlogPost">
@@ -122,10 +116,7 @@ function EditBlogPost() {
           <p className="preview">Preview:</p>
           <div className="markdown-preview">
             <h1 className="title">{formData.title}</h1>
-            <ReactMarkdown
-              rehypePlugins={[rehypeRaw]}
-              children={parseYoutubeLinks(formData.content)}
-            />
+            <MarkdownContent content={formData.content} />
           </div>
         </div>
       </div>

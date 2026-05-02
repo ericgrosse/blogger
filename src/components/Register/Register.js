@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
 import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './Register.scss';
 
 function Register() {
@@ -33,8 +34,8 @@ function Register() {
       toastr.success('Registered successfully');
       navigate('/');
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error during registration: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error during registration: ${getApiErrorMessage(error, 'Unable to register')}`);
       }
     }
   };

@@ -11,14 +11,30 @@ const minPasswordLength = 8;
 const maxPasswordLength = 64;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/; // Password complexity regex without special characters
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format validation regex
+const defaultPageSize = 10;
+const maxPageSize = 50;
+
+const toTrimmedString = (value) => (typeof value === 'string' ? value.trim() : '');
+
+const toPublicUser = (user) => ({
+  _id: user._id,
+  displayName: user.displayName,
+  username: user.username,
+  email: user.email,
+});
+
+const blogPostWithUser = ({ userId: user, ...rest }) => ({ user, ...rest });
 
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
-    const { displayName, username, email, password } = req.body;
+    const displayName = toTrimmedString(req.body.displayName);
+    const username = toTrimmedString(req.body.username);
+    const email = toTrimmedString(req.body.email).toLowerCase();
+    const password = toTrimmedString(req.body.password);
 
     // Check if displayName is empty
-    if (!displayName.trim()) {
+    if (!displayName) {
       return res.status(400).json({ error: 'Display name cannot be empty' });
     }
 
@@ -63,12 +79,7 @@ router.post('/register', async (req, res) => {
     res.status(201).json({
       message: 'User registered successfully',
       token,
-      user: {
-        _id: newUser._id,
-        displayName: newUser.displayName,
-        username: newUser.username,
-        email: newUser.email
-      }
+      user: toPublicUser(newUser),
     });
   } catch (error) {
     console.error(error);
@@ -79,11 +90,16 @@ router.post('/register', async (req, res) => {
 // Login with email or username
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body;
+    const identifier = toTrimmedString(req.body.identifier);
+    const password = toTrimmedString(req.body.password);
+
+    if (!identifier || !password) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     // Find the user by email or username
     const user = await User.findOne({
-      $or: [{ email: identifier }, { username: identifier }],
+      $or: [{ email: identifier.toLowerCase() }, { username: identifier }],
     });
 
     // Check if the user exists
@@ -104,12 +120,7 @@ router.post('/login', async (req, res) => {
     res.status(200).json({
       message: 'Login successful',
       token,
-      user: {
-        _id: user._id,
-        displayName: user.displayName,
-        username: user.username,
-        email: user.email
-      }
+      user: toPublicUser(user),
     });
   } catch (error) {
     console.error(error);
@@ -163,11 +174,11 @@ router.post('/verify-login', async (req, res) => {
 // Get blog posts with sorting and pagination
 router.get('/get-posts', async (req, res) => {
   try {
-    const { page = 1, limit = 10, sortBy = 'views', sortOrder = 'desc' } = req.query;
+    const { page = 1, limit = defaultPageSize, sortBy = 'views', sortOrder = 'desc' } = req.query;
 
     // Convert page and limit to integers
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+    const pageNumber = Math.max(parseInt(page, 10) || 1, 1);
+    const limitNumber = Math.min(Math.max(parseInt(limit, 10) || defaultPageSize, 1), maxPageSize);
 
     // Calculate the number of items to skip based on page number
     const skip = (pageNumber - 1) * limitNumber;
@@ -181,8 +192,9 @@ router.get('/get-posts', async (req, res) => {
     };
 
     // Create the sort object based on the sortBy and sortOrder parameters
+    const sortField = sortByField[sortBy] || sortByField.views;
     const sortObject = {};
-    sortObject[sortByField[sortBy]] = sortOrder === 'desc' ? -1 : 1;
+    sortObject[sortField] = sortOrder === 'asc' ? 1 : -1;
 
     // Find the blog posts based on sorting and pagination
     const postsQuery = BlogPost.find()
@@ -198,7 +210,7 @@ router.get('/get-posts', async (req, res) => {
     ]);
 
     // Destructure user details and create an updated array for paginated posts
-    const updatedPosts = posts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
+    const updatedPosts = posts.map(blogPostWithUser);
 
     res.status(200).json({
       posts: updatedPosts,
@@ -227,7 +239,7 @@ router.get('/:username', async (req, res) => {
         _id: user._id,
         displayName: user.displayName,
         username: user.username,
-        email: user.email
+        email: user.email,
       }
     });
   } catch (error) {
@@ -254,7 +266,7 @@ router.get('/:username/blog-posts', async (req, res) => {
       .lean();
 
     // Destructure user details and create an updated array
-    const updatedBlogPosts = userBlogPosts.map(({ userId: user, ...rest }) => ({ user, ...rest }));
+    const updatedBlogPosts = userBlogPosts.map(blogPostWithUser);
 
     res.status(200).json({ blogPosts: updatedBlogPosts });
   } catch (error) {
@@ -288,8 +300,7 @@ router.get('/:username/blog-posts/:postId', async (req, res) => {
     await userBlogPost.save();
 
     // Destructure user details
-    const { userId, ...rest } = userBlogPost.toObject();
-    const updatedBlogPost = { user: userId, ...rest };
+    const updatedBlogPost = blogPostWithUser(userBlogPost.toObject());
 
     res.status(200).json({ blogPost: updatedBlogPost });
   } catch (error) {
@@ -304,7 +315,7 @@ router.delete('/delete-user', authMiddleware, async (req, res) => {
     const userId = req.user._id;
 
     // Delete the user
-    const deletedUser = await User.findOneAndDelete({ _id: userId });
+    const deletedUser = await User.findOneAndDelete({ _id: userId }).select('-password');
 
     // Check if the user exists
     if (!deletedUser) {
@@ -328,10 +339,10 @@ router.delete('/delete-user', authMiddleware, async (req, res) => {
 // Update user's display name
 router.put('/update-display-name', authMiddleware, async (req, res) => {
   try {
-    const { displayName } = req.body;
+    const displayName = toTrimmedString(req.body.displayName);
 
     // Check if displayName is empty
-    if (!displayName.trim()) {
+    if (!displayName) {
       return res.status(400).json({ error: 'Display name cannot be empty' });
     }
 
@@ -352,7 +363,8 @@ router.put('/update-display-name', authMiddleware, async (req, res) => {
 // Update user's email
 router.put('/update-email', authMiddleware, async (req, res) => {
   try {
-    const { oldEmail, newEmail } = req.body;
+    const oldEmail = toTrimmedString(req.body.oldEmail).toLowerCase();
+    const newEmail = toTrimmedString(req.body.newEmail).toLowerCase();
 
     // Find the user by ID to get the current email
     const user = await User.findById(req.user._id);
@@ -390,7 +402,8 @@ router.put('/update-email', authMiddleware, async (req, res) => {
 // Update user's password
 router.put('/update-password', authMiddleware, async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
+    const oldPassword = toTrimmedString(req.body.oldPassword);
+    const newPassword = toTrimmedString(req.body.newPassword);
 
     // Find the user by ID to get the current password hash
     const user = await User.findById(req.user._id);
@@ -429,7 +442,8 @@ router.put('/update-password', authMiddleware, async (req, res) => {
 // Create a new blog post
 router.post('/blog-posts', authMiddleware, async (req, res) => {
   try {
-    const { title, content, viewCount } = req.body;
+    const title = toTrimmedString(req.body.title);
+    const content = toTrimmedString(req.body.content);
 
     if (!title) {
       return res.status(400).json({ error: 'Missing required field: title' });
@@ -444,7 +458,6 @@ router.post('/blog-posts', authMiddleware, async (req, res) => {
       userId: req.user._id,
       title,
       content,
-      viewCount,
       datePublished: Date.now(),
       dateLastEdited: Date.now()
     });
@@ -456,8 +469,7 @@ router.post('/blog-posts', authMiddleware, async (req, res) => {
     await BlogPost.populate(newBlogPost, { path: 'userId', select: 'username displayName' });
 
     // Rename userId to user in the response
-    const { userId, ...rest } = newBlogPost.toObject();
-    const updatedBlogPost = { user: userId, ...rest };
+    const updatedBlogPost = blogPostWithUser(newBlogPost.toObject());
 
     res.status(201).json({ message: 'Blog post created successfully', blogPost: updatedBlogPost });
   } catch (error) {
@@ -469,7 +481,8 @@ router.post('/blog-posts', authMiddleware, async (req, res) => {
 // Update a blog post
 router.put('/blog-posts/:postId', authMiddleware, async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const title = toTrimmedString(req.body.title);
+    const content = toTrimmedString(req.body.content);
     const { postId } = req.params;
 
     // Check if title is missing
@@ -496,8 +509,7 @@ router.put('/blog-posts/:postId', authMiddleware, async (req, res) => {
     }
 
     // Rename userId to user in the response
-    const { userId, ...rest } = blogPostUpdate.toObject();
-    const updatedBlogPost = { user: userId, ...rest };
+    const updatedBlogPost = blogPostWithUser(blogPostUpdate.toObject());
 
     res.status(200).json({ message: 'Blog post updated successfully', blogPost: updatedBlogPost });
   } catch (error) {

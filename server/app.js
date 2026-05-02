@@ -1,21 +1,23 @@
-require('dotenv').config({ path: '../.env' });
-
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
+
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Check if SESSION_SECRET is set
-if (!process.env.SESSION_SECRET) {
-  console.error('SESSION_SECRET is not set. Please set this environment variable.');
-  process.exit(1); // Exit the application or handle the error appropriately
+const requiredEnvironmentVariables = ['SESSION_SECRET', 'JWT_SECRET'];
+const missingEnvironmentVariables = requiredEnvironmentVariables.filter((name) => !process.env[name]);
+
+if (missingEnvironmentVariables.length > 0) {
+  console.error(`Missing required environment variables: ${missingEnvironmentVariables.join(', ')}`);
+  process.exit(1);
 }
 
 // Use express-session for managing user sessions
@@ -23,11 +25,16 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  },
 }));
 
 // Connect to MongoDB
-// Todo: Setup process.env.MONGODB_URI in the future
-mongoose.connect('mongodb://127.0.0.1/blogger');
+const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1/blogger';
+mongoose.connect(mongoUri);
 const db = mongoose.connection;
 
 // Handle MongoDB connection errors

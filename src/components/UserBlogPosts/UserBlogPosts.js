@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toastr from 'toastr';
 import BlogPost from './../BlogPost/BlogPost';
 import { APIBase } from '../../helpers/APIHelper';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './UserBlogPosts.scss';
 
 function UserBlogPosts() {
@@ -16,21 +17,21 @@ function UserBlogPosts() {
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getUserBlogPosts();
-  }, []);
-
-  const getUserBlogPosts = async () => {
+  const getUserBlogPosts = useCallback(async () => {
     try {
       await axios.post(`${APIBase}/verify-login`, { token }); // handles session timeouts
       const response = await axios.get(`${APIBase}/${username}/blog-posts`);
       setUserPosts(response.data.blogPosts);
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error getting top posts: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error getting posts: ${getApiErrorMessage(error, 'Unable to load posts')}`);
       }
     }
-  };
+  }, [token, username]);
+
+  useEffect(() => {
+    getUserBlogPosts();
+  }, [getUserBlogPosts]);
 
   const handleDeletePost = async (postId) => {
     try {
@@ -47,8 +48,8 @@ function UserBlogPosts() {
       // Get user blog posts again after deletion
       getUserBlogPosts();
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error deleting blog post: ${getApiErrorMessage(error, 'Unable to delete blog post')}`);
       }
     }
   };

@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React from 'react';
 import toastr from 'toastr';
-import { APIBase } from '../../helpers/APIHelper';
+import { getApiErrorMessage, isUnauthorizedError } from '../../helpers/errors';
 import './ConfirmDeleteModal.scss';
 
 const ConfirmDeleteModal = ({ title, post, isOpen, onClose, onDelete }) => {
-  const navigate = useNavigate();
-
   const handleSubmit = async () => {
     try {
-      onDelete(post._id);
+      await onDelete(post._id);
     } catch (error) {
-      if (error.response.status !== 401) {
-        toastr.error(`Error deleting blog post: ${error.response.data.error}`);
+      if (!isUnauthorizedError(error)) {
+        toastr.error(`Error deleting blog post: ${getApiErrorMessage(error, 'Unable to delete blog post')}`);
       }
     }
   };
